@@ -9,7 +9,7 @@ Backend application for EngiWorld project
 4. Run 'Node app.js'
 5. If necessary, change PORT variable in app.js, so it matches your desired port
 6. There is a chance that you will need MongoDB installed. If so, just install it OR comment everything related to mongodb & mongoose in the application (if you don't need mongodb data)
-7. Authentication logic depends on passing JWT token within the Bearer authorization header in a request. We may change it later with any other logic
+7. Authentication logic depends on passing JWT token within a Bearer authorization header in a request. We may change it later
 
 ## Current routes
 
