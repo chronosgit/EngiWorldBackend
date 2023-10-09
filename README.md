@@ -13,8 +13,8 @@ Backend application for EngiWorld project
 
 ## Current routes
 
-/data - to get data about user, who sent a request [GET with access token]
-/auth/login/ - to get access and refresh tokens [POST with username and password]
-/auth/refresh/ - to refresh access and refresh tokens [POST with refresh token]
-
+/data - to get data about user, who sent a request [GET with access token] <br/>
+/auth/login/ - to get access and refresh tokens [POST with username and password] <br/>
+/auth/refresh/ - to refresh access and refresh tokens [POST with refresh token] <br/>
+ <br/> <br/>
 P.S. password for /data route is "123456", username is anything
