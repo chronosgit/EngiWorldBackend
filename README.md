@@ -17,4 +17,4 @@ Backend application for EngiWorld project
 /auth/login/ - to get access and refresh tokens [POST with username and password] <br />
 /auth/refresh/ - to refresh access and refresh tokens [POST with refresh token] <br />
  <br /> <br />
-P.S. password for /data route is "123456", username is anything
+P.S. password for /auth/login route is "123456", username is anything (whole user logic is not implemented yet)
