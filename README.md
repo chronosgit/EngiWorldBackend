@@ -1,7 +1,7 @@
 # EngiWorldBackend
 Backend application for EngiWorld project
 
-# How to use
+## How to use
 
 1. Clone
 2. Run 'npm install'
@@ -10,3 +10,11 @@ Backend application for EngiWorld project
 5. If necessary, change PORT variable in app.js, so it matches your desired port
 6. There is a chance that you will need MongoDB installed. If so, just install it OR comment everything related to mongodb & mongoose in the application (if you don't need mongodb data)
 7. Authentication logic depends on passing JWT token within the Bearer authorization header in a request. We may change it later with any other logic
+
+## Current routes
+
+/data - to get data about user, who sent a request [GET with access token]
+/auth/login/ - to get access and refresh tokens [POST with username and password]
+/auth/refresh/ - to refresh access and refresh tokens [POST with refresh token]
+
+P.S. password for /data route is "123456", username is anything
