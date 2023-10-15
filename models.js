@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema({
         default: false,
     },
     bio: String,
+    refreshToken: String,
 });
 const User = mongoose.model('User', userSchema);
 

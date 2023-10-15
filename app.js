@@ -2,9 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require('cors');
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 require('dotenv').config();
 
-const refreshToken = require("./routes/refresh");
+const refreshTokenHandler = require("./handlers/refreshTokenHandler");
 const verifyJWT = require("./middleware/verifyJWT");
 
 const Models = require("./models");
@@ -15,20 +16,25 @@ const app = express();
 const PORT = "3001";
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json())
-app.use(cors());
+app.use(express.json());
+app.use(cookieParser());
+const corsOptions ={
+    origin: 'http://localhost:3000', 
+    credentials: true,            //access-control-allow-credentials:true
+    optionSuccessStatus: 200
+}
+app.use(cors(corsOptions));
 
 
-
-refreshToken(app); // to refresh tokens
 
 app.listen(PORT, (req, res) => {
     console.log(`Server is listening on port ${PORT}`);
 });
 
+app.get("/refresh", refreshTokenHandler);
+
 app.post("/auth/login/", async (req, res) => {
     const {email, password} = req.body;
-    console.log(req.body);
 
     const user = await Models.User.findOne({email: email});
 
@@ -45,9 +51,10 @@ app.post("/auth/login/", async (req, res) => {
 
         const payload = {}
         const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m", audience: JSON.stringify(user) });
-        const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1y", audience: JSON.stringify(user) });
+        const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1d", audience: JSON.stringify(user) });
 
-        res.json({ accessToken: accessToken, refreshToken: refreshToken });
+        res.cookie("JWT", refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000}); // maxAge of 1 day
+        res.json({accessToken: accessToken});
     }
 });
 
@@ -58,12 +65,15 @@ app.post("/auth/register/", async (req, res) => {
     if(existingUser) {
         res.status(400).json({error: "The user with such email already exists"})
     } else {
-        const user = new Models.User({email: email, username: username, password: password});
-        await user.save();
+        const payload = {
+            username: username,
+            email: email,
+        };
+        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" } );
+        const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1d" } );
 
-        const payload = {};
-        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m", audience: JSON.stringify(user) });
-        const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1d", audience: JSON.stringify(user) });
+        const user = new Models.User({email: email, username: username, password: password, refreshToken: refreshToken});
+        await user.save();
 
         res.cookie("JWT", refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000}); // maxAge of 1 day
         res.json({accessToken: accessToken});
@@ -71,5 +81,5 @@ app.post("/auth/register/", async (req, res) => {
 });
 
 app.get("/user", verifyJWT, (req, res) => {
-    res.json({msg: 200});
+    res.json(req.user);
 });
