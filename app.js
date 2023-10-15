@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 require('dotenv').config();
 
 const refreshToken = require("./routes/refresh");
-const cookieJwtAuth = require("./middleware/bearerTokenAuth");
+const verifyJWT = require("./middleware/verifyJWT");
 
 const Models = require("./models");
 
@@ -61,10 +61,15 @@ app.post("/auth/register/", async (req, res) => {
         const user = new Models.User({email: email, username: username, password: password});
         await user.save();
 
-        const payload = {}
+        const payload = {};
         const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m", audience: JSON.stringify(user) });
-        const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1y", audience: JSON.stringify(user) });
+        const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1d", audience: JSON.stringify(user) });
 
-        res.json({ accessToken: accessToken, refreshToken: refreshToken });
+        res.cookie("JWT", refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000}); // maxAge of 1 day
+        res.json({accessToken: accessToken});
     }
+});
+
+app.get("/user", verifyJWT, (req, res) => {
+    res.json({msg: 200});
 });

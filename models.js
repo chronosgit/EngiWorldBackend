@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
         type: Boolean, // if no pfp, return some default image
         default: false,
     },
-    descr: String,
+    bio: String,
 });
 const User = mongoose.model('User', userSchema);
 
