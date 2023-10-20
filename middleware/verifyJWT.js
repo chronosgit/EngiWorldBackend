@@ -7,14 +7,14 @@ const verifyJWT = (req, res, next) => {
         return res.sendStatus(401);
     } else {
         const token = authHeader.split(" ")[1];
-        jwt.verify(
+        jwt.verify( // OLD UNEXPIRED TOKENS ARE NOT DELETED
             token,
             process.env.ACCESS_TOKEN_SECRET,
             (error, decodedFromToken) => {
                 if(error) {
                     return res.sendStatus(403); // invalid token
                 }
-                req.user = decodedFromToken.username;
+                req.user = decodedFromToken;
                 next();
             }
         );

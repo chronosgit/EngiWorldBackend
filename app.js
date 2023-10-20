@@ -6,6 +6,8 @@ const cookieParser = require("cookie-parser");
 require('dotenv').config();
 
 const refreshTokenHandler = require("./handlers/refreshTokenHandler");
+const userLoginHandler = require("./handlers/userLoginHandler");
+const userRegisterHandler = require("./handlers/userRegisterHandler");
 const verifyJWT = require("./middleware/verifyJWT");
 
 const Models = require("./models");
@@ -33,53 +35,19 @@ app.listen(PORT, (req, res) => {
 
 app.get("/refresh", refreshTokenHandler);
 
-app.post("/auth/login/", async (req, res) => {
-    const {email, password} = req.body;
+app.post("/auth/login/", userLoginHandler);
 
-    const user = await Models.User.findOne({email: email});
+app.post("/auth/register/", userRegisterHandler);
 
-    if(!user) {
-        return res.status(404).json({
-            error: "Such user doesn't exist",
-        });
-    } else if(user.password !== password) {
-        return res.status(403).json({
-            error: "Invalid password",
-        });
-    } else {
-        delete user.password;
-
-        const payload = {}
-        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m", audience: JSON.stringify(user) });
-        const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1d", audience: JSON.stringify(user) });
-
-        res.cookie("JWT", refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000}); // maxAge of 1 day
-        res.json({accessToken: accessToken});
-    }
-});
-
-app.post("/auth/register/", async (req, res) => {
-    const {email, username, password} = req.body;
-
-    const existingUser = await Models.User.findOne({email: email});
-    if(existingUser) {
-        res.status(400).json({error: "The user with such email already exists"})
-    } else {
-        const payload = {
-            username: username,
-            email: email,
-        };
-        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" } );
-        const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1d" } );
-
-        const user = new Models.User({email: email, username: username, password: password, refreshToken: refreshToken});
-        await user.save();
-
-        res.cookie("JWT", refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000}); // maxAge of 1 day
-        res.json({accessToken: accessToken});
-    }
-});
-
-app.get("/user", verifyJWT, (req, res) => {
-    res.json(req.user);
-});
+app.route("/user")
+    .get(verifyJWT, async (req, res) => {
+        const email = req.user.email;
+        const user = await Models.User.findOne({email: email});
+        if(!user) {
+            return res.status(404).json({
+                error: "Such user doesn't exist",
+            });
+        } else {
+            res.json({user: user});
+        }
+    });

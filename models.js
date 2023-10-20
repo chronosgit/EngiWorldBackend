@@ -25,7 +25,79 @@ const userSchema = new mongoose.Schema({
     },
     bio: String,
     refreshToken: String,
+    follows: [
+        {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+    ],
+    // liked: [
+    //     {type: mongoose.Schema.Types.ObjectId, ref: "Post"},
+    // ],
+    // disliked: [
+    //     {type: mongoose.Schema.Types.ObjectId, ref: "Post"},
+    // ],
+    // reposts: [
+    //     {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+    // ],
+    allowed: {
+        type: Array, "default": [],
+    },
 });
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
+
+
+
+const postSchema = new mongoose.Schema({
+    author: {
+        type: mongoose.Schema.Types.ObjectId, ref: "User",
+    },
+    title: String,
+    topic: String,
+    text: String,
+    date: Date,
+    // comments: [
+    //     {type: mongoose.Schema.Types.ObjectId, ref: "Comment"},
+    // ]
+    likes: [
+        {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+    ],
+    dislikes: [
+        {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+    ],
+
+    // NEED FILES FIELD HERE
+});
+const Post = mongoose.model("Post", postSchema);
+
+
+
+const commentSchema = new mongoose.Schema({
+    author: {
+        type: mongoose.Schema.Types.ObjectId, ref: "User",
+    },
+    commentedPost: {
+        type: mongoose.Schema.Types.ObjectId, ref: "Post",
+    },
+    text: String,
+    likes: [
+        {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+    ],
+    dislikes: [
+        {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+    ],
+    date: Date,
+});
+const Comment = mongoose.model("Comment", commentSchema);
+
+
+
+// const notificationSchema = new mongoose.Schema({
+//     receiver: {
+//         type: mongoose.Schema.Types.ObjectId, ref: "User",
+//     },
+//     date: Date,
+//     isRead: Boolean,
+// });
+// here come childs, using mongoose discrimator logic
+
+
 
 module.exports = {User};
