@@ -6,12 +6,10 @@ const Models = require("../models");
 
 const handleRefreshToken = async (req, res) => {
     const cookies = req.cookies;
-    console.log(cookies);
     if(!cookies?.JWT) {
         console.log(401);
         return res.sendStatus(401);
     }
-    console.log(cookies.JWT);
     const refreshToken = cookies.JWT;
     
     const foundUser = await Models.User.findOne({refreshToken: refreshToken});

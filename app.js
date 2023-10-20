@@ -5,10 +5,11 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 require('dotenv').config();
 
+const verifyJWT = require("./middleware/verifyJWT");
 const refreshTokenHandler = require("./handlers/refreshTokenHandler");
 const userLoginHandler = require("./handlers/userLoginHandler");
 const userRegisterHandler = require("./handlers/userRegisterHandler");
-const verifyJWT = require("./middleware/verifyJWT");
+const userCRUDHandlers = require("./handlers/userCRUDHandlers");
 
 const Models = require("./models");
 
@@ -40,14 +41,4 @@ app.post("/auth/login/", userLoginHandler);
 app.post("/auth/register/", userRegisterHandler);
 
 app.route("/user")
-    .get(verifyJWT, async (req, res) => {
-        const email = req.user.email;
-        const user = await Models.User.findOne({email: email});
-        if(!user) {
-            return res.status(404).json({
-                error: "Such user doesn't exist",
-            });
-        } else {
-            res.json({user: user});
-        }
-    });
+    .get(verifyJWT, userCRUDHandlers.handleUserRead);
