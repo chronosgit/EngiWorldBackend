@@ -41,4 +41,5 @@ app.post("/auth/login/", userLoginHandler);
 app.post("/auth/register/", userRegisterHandler);
 
 app.route("/user")
-    .get(verifyJWT, userCRUDHandlers.handleUserRead);
+    .get(verifyJWT, userCRUDHandlers.handleUserRead)
+    .delete(verifyJWT, userCRUDHandlers.handleUserDelete);
