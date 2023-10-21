@@ -7,14 +7,12 @@ const Models = require("../models");
 const handleRefreshToken = async (req, res) => {
     const cookies = req.cookies;
     if(!cookies?.JWT) {
-        console.log(401);
         return res.sendStatus(401);
     }
     const refreshToken = cookies.JWT;
     
     const foundUser = await Models.User.findOne({refreshToken: refreshToken});
     if(!foundUser) {
-        console.log(403);
         res.sendStatus(403);
     } else {
         jwt.verify(

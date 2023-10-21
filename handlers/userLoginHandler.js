@@ -9,11 +9,11 @@ const handleUserLogin = async (req, res) => {
     const user = await Models.User.findOne({email: email});
 
     if(!user) {
-        return res.status(404).json({
+        return res.sendStatus(404).json({
             error: "Such user doesn't exist",
         });
     } else if(user.password !== password) {
-        return res.status(403).json({
+        return res.sendStatus(403).json({
             error: "Invalid password",
         });
     } else {

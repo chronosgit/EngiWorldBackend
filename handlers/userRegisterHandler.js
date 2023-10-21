@@ -8,7 +8,7 @@ const handleUserRegister = async (req, res) => {
 
     const existingUser = await Models.User.findOne({email: email});
     if(existingUser) {
-        res.status(400).json({error: "The user with such email already exists"})
+        res.sendStatus(400).json({error: "The user with such email already exists"})
     } else {
         const payload = {
             username: username,

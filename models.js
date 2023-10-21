@@ -63,7 +63,7 @@ const postSchema = new mongoose.Schema({
         {type: mongoose.Schema.Types.ObjectId, ref: "User"},
     ],
 
-    // NEED FILES FIELD HERE
+    // NEED "files" FIELD HERE
 });
 const Post = mongoose.model("Post", postSchema);
 
@@ -100,4 +100,4 @@ const Comment = mongoose.model("Comment", commentSchema);
 
 
 
-module.exports = {User};
+module.exports = {User, Post, Comment};
