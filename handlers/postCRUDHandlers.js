@@ -11,6 +11,29 @@ const handlePostRead = async (req, res) => {
     }
 };
 
+const handlePostCreation = async (req, res) => {
+    const author = await Models.User.findOne({email: req.user.email});
+    const {
+        title = "",
+        topic = "",
+        text = "",
+        date = new Date(),
+    } = req.body;
+
+    const newPost = new Models.Post(
+        {
+            author: author,
+            title: title,
+            topic: topic,
+            text: text,
+            date: date,
+        }
+    );
+    await newPost.save();
+
+    res.sendStatus(200);
+};
+
 const handlePostUpdate = async (req, res) => {
     const postId = req.params.id;
     const updatedPost = await Models.Post.findById({_id: postId});
@@ -43,4 +66,4 @@ const handlePostDelete = async (req, res) => {
     }
 };
 
-module.exports = {handlePostRead, handlePostUpdate, handlePostDelete,}
+module.exports = {handlePostRead, handlePostCreation, handlePostUpdate, handlePostDelete,}

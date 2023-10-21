@@ -10,8 +10,7 @@ const refreshTokenHandler = require("./handlers/refreshTokenHandler");
 const userLoginHandler = require("./handlers/userLoginHandler");
 const userRegisterHandler = require("./handlers/userRegisterHandler");
 const userRUDHandlers = require("./handlers/userRUDHandlers");
-const postRUDHandlers = require("./handlers/postRUDHandlers");
-const postCreateHandler = require("./handlers/postCreateHandler");
+const postCRUDHandlers = require("./handlers/postCRUDHandlers");
 
 const Models = require("./models");
 
@@ -48,8 +47,8 @@ app.route("/user/")
     .delete(verifyJWT, userRUDHandlers.handleUserDelete);
 
 app.route("/post/:id/")
-    .get(verifyJWT, postRUDHandlers.handlePostRead)
-    .put(verifyJWT, postRUDHandlers.handlePostUpdate)
-    .delete(verifyJWT, postRUDHandlers.handlePostDelete)
+    .get(verifyJWT, postCRUDHandlers.handlePostRead)
+    .put(verifyJWT, postCRUDHandlers.handlePostUpdate)
+    .delete(verifyJWT, postCRUDHandlers.handlePostDelete)
 
-app.post("/post/create/", verifyJWT, postCreateHandler);
+app.post("/post/create/", verifyJWT, postCRUDHandlers.handlePostCreation);
