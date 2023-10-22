@@ -71,8 +71,8 @@ app.get("/user/:userId/reposts/", getRepostsHandler);
 
 app.get("/search/", searchHandler);
 
-app.post("/like/:postId", verifyJWT, likePostHandler);
+app.post("/like/", verifyJWT, likePostHandler);
 
-app.post("/dislike/:postId", verifyJWT, dislikePostHandler);
+app.post("/dislike/", verifyJWT, dislikePostHandler);
 
 app.post("/follow/", verifyJWT, followHandler);

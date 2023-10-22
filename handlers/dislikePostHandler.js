@@ -3,13 +3,13 @@ const Models = require("../models");
 const handlePostDislike = async (req, res) => {
     try {
         const dislikingUser = await Models.User.findOne({email: req.user.email});
-        const dislikedPost = await Models.Post.findById({_id: req.params.postId});
+        const dislikedPost = await Models.Post.findById({_id: req.body.postId});
         if(dislikedPost.dislikes.includes(dislikingUser._id) || dislikingUser.dislikes.includes(dislikedPost._id)) {
             return res.status(400).send({error: "The post has already been disliked by the user"});
         }
         if(dislikedPost.likes.includes(dislikingUser._id)){
             await Models.Post.updateOne(
-                {_id: req.params.postId}, 
+                {_id: dislikedPost._id}, 
                 {
                     $pullAll: {
                         likes: [{_id: dislikingUser._id}],

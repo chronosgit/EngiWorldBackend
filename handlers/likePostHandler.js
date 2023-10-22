@@ -3,14 +3,14 @@ const Models = require("../models");
 const handlePostLike = async (req, res) => {
     try {
         const likingUser = await Models.User.findOne({email: req.user.email});
-        const likedPost = await Models.Post.findById({_id: req.params.postId});
+        const likedPost = await Models.Post.findById({_id: req.body.postId});
         
         if(likedPost.likes.includes(likingUser._id) || likingUser.likes.includes(likedPost._id)) {
             return res.status(400).send({error: "The post has already been liked by the user"});
         }
         if(likedPost.dislikes.includes(likingUser._id)){
             await Models.Post.updateOne(
-                {_id: req.params.postId}, 
+                {_id: likedPost._id}, 
                 {
                     $pullAll: {
                         dislikes: [{_id: likingUser._id}],
