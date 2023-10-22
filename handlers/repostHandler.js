@@ -20,13 +20,14 @@ const handleRepost = async (req, res) => {
             if(!repostingUser.reposts.includes(postId)) {
                 res.status(400).send({message: "Such post hasn't been reposted by the user"});
             } else {
-                repostingUser.reposts = repostingUser.reposts.filter(repost => {
-                    if(repost._id == postId) {
-                        return false;
-                    } else {
-                        return true;
+                await Models.User.updateOne(
+                    {_id: repostingUser._id}, 
+                    {
+                        $pullAll: {
+                            reposts: [{_id: postId}],
+                        },
                     }
-                })
+                );
                 repostingUser.save();
                 
                 res.sendStatus(200);

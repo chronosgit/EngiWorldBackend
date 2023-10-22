@@ -16,6 +16,8 @@ const getAnotherUserHandler = require("./handlers/getAnotherUserHandler");
 const repostHandler = require("./handlers/repostHandler");
 const getRepostsHandler = require("./handlers/getRepostsHandlers");
 const searchHandler = require("./handlers/searchHandler");
+const likePostHandler = require("./handlers/likePostHandler");
+const dislikePostHandler = require("./handlers/dislikePostHandler");
 
 const Models = require("./models");
 
@@ -67,3 +69,7 @@ app.post("/repost/", verifyJWT, repostHandler);
 app.get("/user/:userId/reposts/", getRepostsHandler);
 
 app.get("/search/", searchHandler);
+
+app.post("/like/:postId", verifyJWT, likePostHandler);
+
+app.post("/dislike/:postId", verifyJWT, dislikePostHandler);
