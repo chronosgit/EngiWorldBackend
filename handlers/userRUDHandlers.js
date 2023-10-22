@@ -3,19 +3,12 @@ const Models = require("../models");
 const handleUserRead = async (req, res) => {
     try {
         const email = req.user.email;
-        const user = await Models.User.findOne({email: email});
+        const user = await Models.User.findOne(
+            {email: email},
+            "_id email username hasProfilePic follows reposts profilePic likes dislikes allowed bio"
+        );
 
-        const data = {
-            id: user._id,
-            email: user.email,
-            username: user.username,
-            hasProfilePic: user.hasProfilePic,
-            follows: user.follows,
-            allowed: user.allowed,
-            bio: user.bio,
-        }
-
-        res.json({data});
+        res.json({user});
     } catch(error) {
         res.status(404).send({error: "Getting the user resulted in error"});
     }

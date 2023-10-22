@@ -15,6 +15,7 @@ const postCRUDHandlers = require("./handlers/postCRUDHandlers");
 const getAnotherUserHandler = require("./handlers/getAnotherUserHandler");
 const repostHandler = require("./handlers/repostHandler");
 const getRepostsHandler = require("./handlers/getRepostsHandlers");
+const searchHandler = require("./handlers/searchHandler");
 
 const Models = require("./models");
 
@@ -64,3 +65,5 @@ app.get("/user/:id/", getAnotherUserHandler);
 app.post("/repost/", verifyJWT, repostHandler);
 
 app.get("/user/:userId/reposts/", getRepostsHandler);
+
+app.get("/search/", searchHandler);
