@@ -25,15 +25,15 @@ const userSchema = new mongoose.Schema({
     },
     bio: String,
     refreshToken: String,
-    follows: [
-        {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+    // follows: [
+    //     {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+    // ],
+    likes: [
+        {type: mongoose.Schema.Types.ObjectId, ref: "Post"},
     ],
-    // liked: [
-    //     {type: mongoose.Schema.Types.ObjectId, ref: "Post"},
-    // ],
-    // disliked: [
-    //     {type: mongoose.Schema.Types.ObjectId, ref: "Post"},
-    // ],
+    dislikes: [
+        {type: mongoose.Schema.Types.ObjectId, ref: "Post"},
+    ],
     reposts: [
         {type: mongoose.Schema.Types.ObjectId, ref: "Post"},
     ],

@@ -4,12 +4,10 @@ const handlePostDislike = async (req, res) => {
     try {
         const dislikingUser = await Models.User.findOne({email: req.user.email});
         const dislikedPost = await Models.Post.findById({_id: req.params.postId});
-        if(dislikedPost.dislikes.includes(dislikingUser._id)) {
-            // dislikedPost.likes = [];
-            // dislikedPost.dislikes = [];
-            // dislikedPost.save();
+        if(dislikedPost.dislikes.includes(dislikingUser._id) || dislikingUser.dislikes.includes(dislikedPost._id)) {
             return res.status(400).send({error: "The post has already been disliked by the user"});
-        } else if(dislikedPost.likes.includes(dislikingUser._id)){
+        }
+        if(dislikedPost.likes.includes(dislikingUser._id)){
             await Models.Post.updateOne(
                 {_id: req.params.postId}, 
                 {
@@ -19,9 +17,20 @@ const handlePostDislike = async (req, res) => {
                 }
             );
         }
-
+        if(dislikingUser.likes.includes(dislikedPost._id)){
+            await Models.User.updateOne(
+                {_id: dislikingUser._id}, 
+                {
+                    $pullAll: {
+                        likes: [{_id: dislikedPost._id}],
+                    },
+                }
+            );
+        }
         dislikedPost.dislikes.push(dislikingUser);
+        dislikingUser.dislikes.push(dislikedPost);
         dislikedPost.save();
+        dislikingUser.save();
 
         res.sendStatus(200);
     } catch(error) {

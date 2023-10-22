@@ -44,8 +44,20 @@ const handleUserUpdate = async (req, res) => {
 const handleUserDelete = async (req, res) => {
     try {
         const email = req.user.email;
+        const user = await Models.User.findOne({email: email});
+        await Models.Post.deleteMany({author: user});
+        await Models.Post.updateMany(
+            {}, 
+            {
+                $pullAll: {
+                    dislikes: [{_id: user._id}],
+                    likes: [{_id: user._id}],
+                },
+            }
+        );
         await Models.User.deleteOne({email: email});
 
+        res.clearCookie("JWT", {httpOnly: true, maxAge: 24 * 60 * 60 * 1000});
         res.sendStatus(200);
     } catch(error) {
         res.status(404).send({error: "Deleting the user resulted in error"});
