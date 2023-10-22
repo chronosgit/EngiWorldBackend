@@ -14,7 +14,7 @@ Frontend application: https://github.com/chronosgit/EngiWorld
 7. Authentication logic depends on passing JWT token within a Bearer authorization header in a request
 
 ## Routes
-/refresh/ &nbsp &nbsp &nbsp GET request, requires JWT cookie, updates refresh token and return new JWT cookie and access token  
+/refresh/&emspGET request, requires JWT cookie, updates refresh token and return new JWT cookie and access token  
 /auth/login/&nbsp&nbsp&nbspPOST request, requires info in body, returns JWT cookie and access token  
 /auth/register/&nbsp&nbsp&nbspPOST request, requires info in body, returns JWT cookie, access token and creates new user  
 /auth/logout/&nbsp&nbsp&nbspGET request, requires JWT cookie, empties refresh token in User model and clears cookie  
