@@ -140,15 +140,23 @@ Requires query parameter, return all users with username AND all posts with titl
 #### Like a post
 
 ```http
-  POST /like/:postId/
+  POST /like/
 ```
 
-Requires acccess token, makes changes in user and post models info
+Requires acccess token and postId in body, makes changes in user and post models info
 
 #### Dislike a post
 
 ```http
-  POST /dislike/:postId/
+  POST /dislike/
 ```
 
-Requires acccess token, makes changes in user and post models info
+Requires access token and postId in body, makes changes in user and post models info
+
+#### Follow / Unfollow user
+
+```http
+  POST /follow/
+```
+
+Requires access token and userId of followed user in body, makes changes in user models info
