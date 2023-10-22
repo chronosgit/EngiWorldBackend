@@ -18,6 +18,7 @@ const getRepostsHandler = require("./handlers/getRepostsHandlers");
 const searchHandler = require("./handlers/searchHandler");
 const likePostHandler = require("./handlers/likePostHandler");
 const dislikePostHandler = require("./handlers/dislikePostHandler");
+const followHandler = require("./handlers/followHandler");
 
 const Models = require("./models");
 
@@ -73,3 +74,5 @@ app.get("/search/", searchHandler);
 app.post("/like/:postId", verifyJWT, likePostHandler);
 
 app.post("/dislike/:postId", verifyJWT, dislikePostHandler);
+
+app.post("/follow/", verifyJWT, followHandler);

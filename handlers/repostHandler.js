@@ -28,7 +28,6 @@ const handleRepost = async (req, res) => {
                         },
                     }
                 );
-                repostingUser.save();
                 
                 res.sendStatus(200);
             }
