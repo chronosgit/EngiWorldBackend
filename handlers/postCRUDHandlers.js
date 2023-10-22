@@ -42,6 +42,12 @@ const handlePostUpdate = async (req, res) => {
     try {
         const postId = req.params.id;
         const updatedPost = await Models.Post.findById({_id: postId});
+
+        const requestingUser = await Models.User.findOne({email: req.user.email});
+        if(updatedPost.author == requestingUser._id) {
+            return res.status(403).send({error: "You don't have right for updating this post"});
+        }
+
         const {
             title = updatedPost.title,
             topic = updatedPost.topic,
@@ -61,8 +67,13 @@ const handlePostUpdate = async (req, res) => {
 
 const handlePostDelete = async (req, res) => {
     try {
-        const postId = req.params.id;
-        await Models.Post.deleteOne({_id: postId});
+        const deletablePost = await Models.Post.findById({_id: req.params.id});
+        const requestingUser = await Models.User.findOne({email: req.user.email});
+        if(deletablePost.author == requestingUser._id) {
+            return res.status(403).send({error: "You don't have right for updating this post"});
+        }
+
+        await Models.Post.deleteOne({_id: req.params.id});
         
         res.sendStatus(200);
     } catch(error) {
