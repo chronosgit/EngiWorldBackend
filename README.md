@@ -15,16 +15,16 @@ Frontend application: https://github.com/chronosgit/EngiWorld
 
 ## Routes
 <pre>
-         /refresh/   GET request, requires JWT cookie, updates refresh token and return new JWT cookie and access token  
-         /auth/login/   POST request, requires info in body, returns JWT cookie and access token  
-         /auth/register/   POST request, requires info in body, returns JWT cookie, access token and creates new user  
-         /auth/logout/   GET request, requires JWT cookie, empties refresh token in User model and clears cookie  
-         /user/   GET request, requires access token, returns info about user, sending a request  
-                  PUT request, requires access token and any new info in body, updates user info in model  
-                  DELETE request, requires access token and deletes his info everywhere  
-         /post/:id/   GET request, requires post id, returns post  
-                      PUT request, requires access token and any new info in body, updates post info in model and returns updates post  
-                      DELETE request, requires access token and deletes post's info everywhere  
+         /refresh/&nbsp&nbsp&nbspGET request, requires JWT cookie, updates refresh token and return new JWT cookie and access token  
+         /auth/login/&nbsp&nbsp&nbspPOST request, requires info in body, returns JWT cookie and access token  
+         /auth/register/&nbsp&nbsp&nbspPOST request, requires info in body, returns JWT cookie, access token and creates new user  
+         /auth/logout/&nbsp&nbsp&nbspGET request, requires JWT cookie, empties refresh token in User model and clears cookie  
+         /user/&nbsp&nbsp&nbspGET request, requires access token, returns info about user, sending a request  
+&nbsp&nbsp&nbsp&nbsp&nbspPUT request, requires access token and any new info in body, updates user info in model  
+&nbsp&nbsp&nbsp&nbsp&nbspDELETE request, requires access token and deletes his info everywhere  
+         /post/:id/&nbsp&nbsp&nbspGET request, requires post id, returns post  
+&nbsp&nbsp&nbsp&nbsp&nbspPUT request, requires access token and any new info in body, updates post info in model and returns updates post  
+&nbsp&nbsp&nbsp&nbsp&nbspDELETE request, requires access token and deletes post's info everywhere  
          /post/create/   POST request, requires access token and info in body, creates new post  
          /user/:id/   GET request, requires user id and returns public user info  
          /repost/   POST request, requires access token and "operationType" & "postId" fields in body  
