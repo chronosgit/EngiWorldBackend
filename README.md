@@ -19,8 +19,10 @@ Frontend application: https://github.com/chronosgit/EngiWorld
 
 #### Refresh tokens
 
+GET request
+
 ```http
-  GET /refresh/
+  /refresh/
 ```
 
 Requires JWT cookie, updates refresh token and return new JWT cookie and access token
