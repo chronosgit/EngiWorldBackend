@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
 require('dotenv').config();
 
 const Models = require("../models");
@@ -20,7 +19,6 @@ const handleRefreshToken = async (req, res) => {
             process.env.REFRESH_TOKEN_SECRET,
             (error, decodedFromToken) => {
                 if(error || foundUser.username !== decodedFromToken.username) {
-                    console.log("inner error")
                     return res.sendStatus(403);
                 } else {
                     const payload = {

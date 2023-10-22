@@ -8,7 +8,17 @@ const handleUserRead = async (req, res) => {
             error: "Such user doesn't exist",
         });
     } else {
-        res.json({user: user});
+        const data = {
+            id: user._id,
+            email: user.email,
+            username: user.username,
+            hasProfilePic: user.hasProfilePic,
+            follows: user.follows,
+            allowed: user.allowed,
+            bio: user.bio,
+        }
+
+        res.json({data});
     }
 };
 
@@ -27,7 +37,7 @@ const handleUserUpdate = async (req, res) => {
             error: "Such user doesn't exist",
         });
     } else {
-        const updatedUser = await Models.User.updateOne(
+        await Models.User.updateOne(
             {email: email}, 
             {
                 password: password, profilePic: profilePic, 
@@ -35,7 +45,7 @@ const handleUserUpdate = async (req, res) => {
                 allowed: allowed,
             }
         );
-        res.json({updatedUserInfo: updatedUser, oldUserInfo: user});
+        res.sendStatus(200);
     }
 };
 
