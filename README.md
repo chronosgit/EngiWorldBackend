@@ -29,136 +29,170 @@ Requires JWT cookie, updates refresh token and return new JWT cookie and access 
 
 #### Login
 
+POST request
+
 ```http
-  POST /auth/login/
+  /auth/login/
 ```
 
 Requires info in body, returns JWT cookie and access token
 
 #### Register
 
+POST request
+
 ```http
-  POST /auth/register/
+  /auth/register/
 ```
 
 Requires info in body, returns JWT cookie, access token and creates new user
 
 #### Logout
 
+GET request
+
 ```http
-  GET /auth/logout/
+  /auth/logout/
 ```
 
 Requires JWT cookie, empties refresh token in User model and clears cookie
 
 #### Read user, sending the request
 
+GET request
+
 ```http
-  GET /user/
+  /user/
 ```
 
 Requires access token, returns info about user, sending a request
 
 #### Update user, sending the request
 
+PUT request
+
 ```http
-  PUT /user/
+  /user/
 ```
 
 Requires access token and any new info in body, updates user info in model
 
 #### Delete user, sending the request
 
+DELETE request
+
 ```http
-  DELETE /user/
+  /user/
 ```
 
 Requires access token and deletes his info everywhere
 
 #### Read post by ID
 
+GET request
+
 ```http
-  GET /post/:id/
+  /post/:id/
 ```
 
 Requires post id, returns post
 
 #### Update post by ID
 
+PUT request
+
 ```http
-  PUT /post/:id/
+  /post/:id/
 ```
 
 Requires access token and any new info in body, updates post info in model and returns updates post
 
 #### Delete post by ID
 
+DELETE request
+
 ```http
-  DELETE /post/:id/
+  /post/:id/
 ```
 
 Requires access token and deletes post's info everywhere
 
 #### Create new post
 
+POST request
+
 ```http
-  POST /post/create/
+  /post/create/
 ```
 
 Requires access token and info in body, creates new post
 
 #### Get user by ID
 
+GET request
+
 ```http
-  GET /user/:id/
+  /user/:id/
 ```
 
 Requires user id and returns public user info
 
 #### Make or delete repost 
 
+POST request
+
 ```http
-  POST /repost/
+  /repost/
 ```
 
 Requires access token and "operationType" & "postId" fields in body
 
 #### Get all reports of user by user ID
 
+GET request
+
 ```http
-  GET /user/:userId/reposts/
+  /user/:userId/reposts/
 ```
 
 Requires user id and return all reports of user with such id
 
 #### Search posts and users by query param
 
+GET request
+
 ```http
-  GET /search/
+  /search/
 ```
 
 Requires query parameter, return all users with username AND all posts with title corresponding to query param
 
 #### Like a post
 
+POST request
+
 ```http
-  POST /like/
+  /like/
 ```
 
 Requires acccess token and postId in body, makes changes in user and post models info
 
 #### Dislike a post
 
+POST request
+
 ```http
-  POST /dislike/
+  /dislike/
 ```
 
 Requires access token and postId in body, makes changes in user and post models info
 
 #### Follow / Unfollow user
 
+POST request
+
 ```http
-  POST /follow/
+  /follow/
 ```
 
 Requires access token and userId of followed user in body, makes changes in user models info
