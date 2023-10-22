@@ -34,9 +34,9 @@ const userSchema = new mongoose.Schema({
     // disliked: [
     //     {type: mongoose.Schema.Types.ObjectId, ref: "Post"},
     // ],
-    // reposts: [
-    //     {type: mongoose.Schema.Types.ObjectId, ref: "User"},
-    // ],
+    reposts: [
+        {type: mongoose.Schema.Types.ObjectId, ref: "Post"},
+    ],
     allowed: {
         type: Array, "default": [],
     },

@@ -13,6 +13,7 @@ const userLogoutHandler = require("./handlers/userLogoutHandler");
 const userRUDHandlers = require("./handlers/userRUDHandlers");
 const postCRUDHandlers = require("./handlers/postCRUDHandlers");
 const getAnotherUserHandler = require("./handlers/getAnotherUserHandler");
+const repostHandler = require("./handlers/repostHandler");
 
 const Models = require("./models");
 
@@ -58,3 +59,5 @@ app.route("/post/:id/")
 app.post("/post/create/", verifyJWT, postCRUDHandlers.handlePostCreation);
 
 app.get("/user/:id/", getAnotherUserHandler);
+
+app.post("/repost/", verifyJWT, repostHandler);
