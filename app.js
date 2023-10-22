@@ -14,6 +14,7 @@ const userRUDHandlers = require("./handlers/userRUDHandlers");
 const postCRUDHandlers = require("./handlers/postCRUDHandlers");
 const getAnotherUserHandler = require("./handlers/getAnotherUserHandler");
 const repostHandler = require("./handlers/repostHandler");
+const getRepostsHandler = require("./handlers/getRepostsHandlers");
 
 const Models = require("./models");
 
@@ -54,10 +55,12 @@ app.route("/user/")
 app.route("/post/:id/")
     .get(postCRUDHandlers.handlePostRead)
     .put(verifyJWT, postCRUDHandlers.handlePostUpdate)
-    .delete(verifyJWT, postCRUDHandlers.handlePostDelete)
+    .delete(verifyJWT, postCRUDHandlers.handlePostDelete);
 
 app.post("/post/create/", verifyJWT, postCRUDHandlers.handlePostCreation);
 
 app.get("/user/:id/", getAnotherUserHandler);
 
 app.post("/repost/", verifyJWT, repostHandler);
+
+app.get("/user/:userId/reposts/", getRepostsHandler);
