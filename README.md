@@ -195,4 +195,4 @@ POST request
   /follow/
 ```
 
-Requires access token and userId of followed user in body, makes changes in user models info
+Requires access token and userId of followed user & operationType in body, makes changes in user models info
