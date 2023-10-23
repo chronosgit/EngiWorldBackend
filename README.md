@@ -45,7 +45,7 @@ POST request
   /auth/register/
 ```
 
-Requires info in body, returns JWT cookie, access token and creates new user
+Requires info in body, returns JWT cookie, access token and creates new user with default profile picture
 
 #### Logout
 
@@ -65,7 +65,7 @@ GET request
   /user/
 ```
 
-Requires access token, returns info about user, sending a request
+Requires access token, returns info about user, sending a request (info includes Buffer object or Base64 string for Image)
 
 #### Update user, sending the request
 
@@ -135,7 +135,7 @@ GET request
   /user/:id/
 ```
 
-Requires user id and returns public user info
+Requires user id and returns public user info, including Buffer object or Base64 string for Image
 
 #### Make or delete repost 
 
@@ -196,3 +196,13 @@ POST request
 ```
 
 Requires access token and userId of followed user & operationType in body, makes changes in user models info
+
+#### Upload profile picture
+
+POST request
+
+```http
+  /upload/profilePicture/
+```
+
+Requires access token and one image file (.jpg, .jpeg, .png, .wbep) in request, makes changes in user models info and return user info
