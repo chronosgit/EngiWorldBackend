@@ -1,6 +1,6 @@
 # Project Title
 
-A brief description of what this project does and who it's for# EngiWorldBackend
+EngiWorldBackend
 Backend application for EngiWorld project
 
 Frontend application: https://github.com/chronosgit/EngiWorld
