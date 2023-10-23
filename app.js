@@ -94,22 +94,18 @@ app.post(
 );
 
 app.get("/feed/", async (req, res) => {
-    try {   
-        if(res.user) {
-            res.sendStatus(200);
+    try {
+        const start = req.query.start;
+        const end = req.query.end;
+
+        const recentPosts = await Models.Post.find().sort({created_at: -1});
+
+        if(end - start > recentPosts.length) {
+            res.json(recentPosts);
         } else {
-            const start = req.query.start;
-            const end = req.query.end;
+            const limitedRecentPosts = recentPosts.slice(start - 1, end);
 
-            const recentPosts = await Models.Post.find().sort({created_at: -1});
-
-            if(end - start > recentPosts.length) {
-                res.json(recentPosts);
-            } else {
-                const limitedRecentPosts = recentPosts.slice(start - 1, end);
-
-                res.json(limitedRecentPosts);
-            }
+            res.json(limitedRecentPosts);
         }
     } catch(error) {
         console.log(error);
