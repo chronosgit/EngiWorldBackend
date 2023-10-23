@@ -92,3 +92,22 @@ app.post(
     ], 
     uploadProfilePicHandler
 );
+
+app.get("/feed/authorized/", verifyJWT, async (req, res) => {
+    const user = await Models.User.findOne({email: req.user.email});
+
+    res.status(200);
+});
+
+app.get("/feed/random/", async (req, res) => {
+    
+
+    res.status(200);
+});
+
+app.get("/feed/:topic/", async (req, res) => { // getting 20 posts
+    const topic = req.params.topic;
+    const posts = Models.Post.find({topic: topic});
+
+    res.status(200);
+});
