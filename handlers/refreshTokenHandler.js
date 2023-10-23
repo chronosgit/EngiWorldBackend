@@ -34,7 +34,7 @@ const handleRefreshToken = async (req, res) => {
             }
         );
     } catch(error) {
-        res.status(403).send({error: "Refresh request resulted in error"});
+        res.status(500).send({error: "Refresh request resulted in error"});
     }
 }
 

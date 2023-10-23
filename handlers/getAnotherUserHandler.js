@@ -21,7 +21,7 @@ const handleGettingAnotherUser = async (req, res) => {
         res.json({data});
     } catch(error) {
         console.log(error);
-        res.status(404).send({error: "Getting the user resulted in error"});
+        res.status(500).send({error: "Getting the user resulted in error"});
     }
 };
 

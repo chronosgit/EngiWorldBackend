@@ -26,8 +26,7 @@ const handleProfilePicUpload = async (req, res) => {
 
         res.json(user);
     } catch(error) {
-        console.log(error);
-        res.status(400).send({error: "Uploading the picture resulted in error"});
+        res.status(500).send({error: "Uploading the picture resulted in error"});
     }
 }
 

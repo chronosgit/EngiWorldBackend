@@ -33,7 +33,7 @@ const handleFollow = async (req, res) => {
             res.status(400).send({error: "Wrong operationType in post request"});
         }
     } catch(error) {
-        res.status(404).send({error: "Following resulted in error"});
+        res.status(500).send({error: "Following resulted in error"});
     }
 };
 

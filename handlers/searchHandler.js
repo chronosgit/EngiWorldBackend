@@ -29,7 +29,7 @@ const handleSearch = async (req, res) => {
 
         res.json({data});
     } catch(error) {
-        res.status(404).send({error: "Search resulted in error"});
+        res.status(500).send({error: "Search resulted in error"});
     }
 };
 

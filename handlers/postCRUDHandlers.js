@@ -7,7 +7,7 @@ const handlePostRead = async (req, res) => {
 
         res.json({requestedPost});
     } catch(error) {
-        res.status(404).send({error: "Getting the post resulted in error"});
+        res.status(500).send({error: "Getting the post resulted in error"});
     }
 };
 
@@ -34,7 +34,7 @@ const handlePostCreation = async (req, res) => {
     
         res.sendStatus(201);
     } catch(error) {
-        res.status(404).send({error: "Creating new post resulted in error"});
+        res.status(500).send({error: "Creating new post resulted in error"});
     }
 };
 
@@ -61,7 +61,7 @@ const handlePostUpdate = async (req, res) => {
     
         res.json(updatedPost);
     } catch(error) {
-        res.status(404).send({error: "Updating the post resulted in error"});
+        res.status(500).send({error: "Updating the post resulted in error"});
     }
 };
 
@@ -77,7 +77,7 @@ const handlePostDelete = async (req, res) => {
         
         res.sendStatus(200);
     } catch(error) {
-        res.status(404).send({error: "Deleting the post resulted in error"});
+        res.status(500).send({error: "Deleting the post resulted in error"});
     }
 };
 

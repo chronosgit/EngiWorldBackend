@@ -29,7 +29,7 @@ const handleUserLogin = async (req, res) => {
             res.json({accessToken});
         }
     } catch(error) {
-        return res.status(404).send({error: "Logging in resulted in error"});
+        return res.status(500).send({error: "Logging in resulted in error"});
     }
 }
 

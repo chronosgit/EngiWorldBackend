@@ -22,7 +22,7 @@ const handleUserLogout = async (req, res) => {
             res.sendStatus(200);
         }
     } catch(error) {
-        res.status(404).send({error: "Logouting resulted in error"});
+        res.status(500).send({error: "Logouting resulted in error"});
     }
 };
 

@@ -21,7 +21,7 @@ const handleUserRead = async (req, res) => {
         res.json({data});
     } catch(error) {
         console.log(error);
-        res.status(404).send({error: "Getting the user resulted in error"});
+        res.status(500).send({error: "Getting the user resulted in error"});
     }
 };
 
@@ -48,7 +48,7 @@ const handleUserUpdate = async (req, res) => {
 
         res.sendStatus(200);
     } catch(error) {
-        res.status(404).send({error: "Updating the user resulted in error"});
+        res.status(500).send({error: "Updating the user resulted in error"});
     }
 };
 
@@ -71,7 +71,7 @@ const handleUserDelete = async (req, res) => {
         res.clearCookie("JWT", {httpOnly: true, maxAge: 24 * 60 * 60 * 1000});
         res.sendStatus(200);
     } catch(error) {
-        res.status(404).send({error: "Deleting the user resulted in error"});
+        res.status(500).send({error: "Deleting the user resulted in error"});
     }
 };
 

@@ -93,16 +93,28 @@ app.post(
     uploadProfilePicHandler
 );
 
-app.get("/feed/authorized/", verifyJWT, async (req, res) => {
-    const user = await Models.User.findOne({email: req.user.email});
+app.get("/feed/", async (req, res) => {
+    try {   
+        if(res.user) {
+            res.sendStatus(200);
+        } else {
+            const start = req.query.start;
+            const end = req.query.end;
 
-    res.status(200);
-});
+            const recentPosts = await Models.Post.find().sort({created_at: -1});
 
-app.get("/feed/random/", async (req, res) => {
-    
+            if(end - start > recentPosts.length) {
+                res.json(recentPosts);
+            } else {
+                const limitedRecentPosts = recentPosts.slice(start - 1, end);
 
-    res.status(200);
+                res.json(limitedRecentPosts);
+            }
+        }
+    } catch(error) {
+        console.log(error);
+        res.status(500).send({error: "Getting posts resulted in error"});
+    }
 });
 
 app.get("/feed/:topic/", async (req, res) => { // getting 20 posts
@@ -110,4 +122,12 @@ app.get("/feed/:topic/", async (req, res) => { // getting 20 posts
     const posts = Models.Post.find({topic: topic});
 
     res.status(200);
+});
+
+app.post("/comment/", async (req, res) => {
+    
+});
+
+app.get("/user/:userId/posts/", async (req, res) => {
+
 });

@@ -35,7 +35,7 @@ const handleRepost = async (req, res) => {
             res.status(400).send({error: "Wrong operationType in post request"});
         }
     } catch(error) {
-        res.status(404).send({error: "Handling the request resulted in error"});
+        res.status(500).send({error: "Handling the request resulted in error"});
     }
 };
 
