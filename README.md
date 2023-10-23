@@ -1,6 +1,6 @@
 # Project Title
 
-EngiWorldBackend
+EngiWorldBackend /n
 Backend application for EngiWorld project
 
 Frontend application: https://github.com/chronosgit/EngiWorld
