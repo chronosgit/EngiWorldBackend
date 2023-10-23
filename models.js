@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
         data: Buffer,
         contentType: String,
     },
+    defaultProfilePic: {
+        data: Buffer,
+        contentType: String,
+    },
     hasProfilePic: {
         type: Boolean, // if no pfp, return some default image
         default: false,

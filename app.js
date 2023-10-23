@@ -3,9 +3,13 @@ const mongoose = require("mongoose");
 const cors = require('cors');
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const fileUpload = require("express-fileupload");
 require('dotenv').config();
 
 const verifyJWT = require("./middleware/verifyJWT");
+const filesPayloadExists = require("./middleware/filesPayloadExists");
+const fileSizeLimiter = require("./middleware/fileSizeLimiter");
+
 const refreshTokenHandler = require("./handlers/refreshTokenHandler");
 const userLoginHandler = require("./handlers/userLoginHandler");
 const userRegisterHandler = require("./handlers/userRegisterHandler");
@@ -19,6 +23,7 @@ const searchHandler = require("./handlers/searchHandler");
 const likePostHandler = require("./handlers/likePostHandler");
 const dislikePostHandler = require("./handlers/dislikePostHandler");
 const followHandler = require("./handlers/followHandler");
+const uploadProfilePicHandler = require("./handlers/uploadProfilePicHandler");
 
 const Models = require("./models");
 
@@ -76,3 +81,14 @@ app.post("/like/", verifyJWT, likePostHandler);
 app.post("/dislike/", verifyJWT, dislikePostHandler);
 
 app.post("/follow/", verifyJWT, followHandler);
+
+app.post(
+    "/upload/profilePicture/", 
+    [
+        verifyJWT, 
+        fileUpload({createParentPath: true}),
+        filesPayloadExists,
+        fileSizeLimiter,
+    ], 
+    uploadProfilePicHandler
+);
