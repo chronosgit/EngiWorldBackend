@@ -206,3 +206,13 @@ POST request
 ```
 
 Requires access token and one image file (.jpg, .jpeg, .png, .wbep) in request, makes changes in user models info and return user info
+
+#### Get recent posts, limited by query params (start, end)
+
+GET request
+
+```http
+  /feed/
+```
+
+Requires query params (start, end) in params, returns "end - start" number of the newest posts
