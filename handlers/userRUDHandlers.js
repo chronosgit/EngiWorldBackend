@@ -5,20 +5,19 @@ const handleUserRead = async (req, res) => {
         const email = req.user.email;
         const user = await Models.User.findOne({email: email});
 
-        let data = {};
-        if(user.hasProfilePic) {
-            data = await Models.User.findById(
-                {_id: user._id}, 
-                "_id email username hasProfilePic follows reposts profilePic likes dislikes allowed bio"
-            );
-        } else {
-            data = await Models.User.findById(
-                {_id: user._id}, 
-                "_id email username hasProfilePic follows reposts defaultProfilePic likes dislikes allowed bio"
-            );
-        }
+        const profilePicBuffer = user.hasProfilePic ? user.profilePic : user.defaultProfilePic; 
+        const profilePicBase64 = Buffer.from(profilePicBuffer.data, "base64").toString("base64");
 
-        res.json({data});
+        res.json({
+            email: email,
+            username: user.username,
+            id: user._id,
+            profilePic: profilePicBase64,
+            likes: user.likes,
+            dislikes: user.dislikes,
+            allowed: user.allowed,
+            bio: user.bio,
+        });
     } catch(error) {
         console.log(error);
         res.status(500).send({error: "Getting the user resulted in error"});

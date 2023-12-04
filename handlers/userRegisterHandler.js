@@ -31,8 +31,21 @@ const handleUserRegister = async (req, res) => {
             });
             await user.save();
     
+            const profilePicBuffer = user.hasProfilePic ? user.profilePic : user.defaultProfilePic; 
+            const profilePicBase64 = Buffer.from(profilePicBuffer.data, "base64").toString("base64");
+
             res.cookie("JWT", refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000}); // maxAge of 1 day
-            res.json({accessToken});
+            res.json({
+                email: email,
+                username: user.username,
+                id: user._id,
+                profilePic: profilePicBase64,
+                likes: user.likes,
+                dislikes: user.dislikes,
+                allowed: user.allowed,
+                bio: user.bio,
+                accessToken: accessToken,
+            });
         }
     } catch(error) {
         console.log(error);
