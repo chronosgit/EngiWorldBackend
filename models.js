@@ -27,7 +27,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean, // if no pfp, return some default image
         default: false,
     },
-    bio: String,
+    bio: {
+        type: String,
+        default: "No bio",
+    },
     refreshToken: String,
     follows: [
         {type: mongoose.Schema.Types.ObjectId, ref: "User"},

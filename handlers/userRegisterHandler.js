@@ -12,7 +12,7 @@ const handleUserRegister = async (req, res) => {
         const existingUser = await Models.User.findOne({email: email});
 
         if(existingUser) {
-            res.status(400).send({error: "The user with such email already exists"})
+            res.status(400).send({error: "The user with such email or username already exists"})
         } else {
             const payload = {
                 username: username,
@@ -34,7 +34,7 @@ const handleUserRegister = async (req, res) => {
             const profilePicBuffer = user.hasProfilePic ? user.profilePic : user.defaultProfilePic; 
             const profilePicBase64 = Buffer.from(profilePicBuffer.data, "base64").toString("base64");
 
-            res.cookie("JWT", refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000}); // maxAge of 1 day
+            res.cookie("JWT", refreshToken, {httpOnly: false, maxAge: 24 * 60 * 60 * 1000}); // maxAge of 1 day
             res.json({
                 email: email,
                 username: user.username,

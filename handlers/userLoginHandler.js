@@ -28,7 +28,7 @@ const handleUserLogin = async (req, res) => {
             const profilePicBuffer = user.hasProfilePic ? user.profilePic : user.defaultProfilePic; 
             const profilePicBase64 = Buffer.from(profilePicBuffer.data, "base64").toString("base64");
 
-            res.cookie("JWT", refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000}); // maxAge of 1 day
+            res.cookie("JWT", refreshToken, {httpOnly: false, maxAge: 24 * 60 * 60 * 1000}); // maxAge of 1 day
             res.json({
                 email: email,
                 username: user.username,

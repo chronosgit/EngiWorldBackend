@@ -5,20 +5,19 @@ const handleGettingAnotherUser = async (req, res) => {
         const requiredUserId = req.params.id;
         const requiredUser = await Models.User.findById({_id: requiredUserId});
         
-        let data = {};
-        if(requiredUser.hasProfilePic) {
-            data = await Models.User.findById(
-                {_id: requiredUserId}, 
-                "_id email username hasProfilePic follows reposts profilePic likes dislikes allowed bio"
-            );
-        } else {
-            data = await Models.User.findById(
-                {_id: requiredUserId}, 
-                "_id email username hasProfilePic follows reposts defaultProfilePic likes dislikes allowed bio"
-            );
-        }
+        const profilePicBuffer = requiredUser.hasProfilePic ? requiredUser.profilePic : requiredUser.defaultProfilePic; 
+        const profilePicBase64 = Buffer.from(profilePicBuffer.data, "base64").toString("base64");
 
-        res.json({data});
+        res.json({
+            email: requiredUser.email,
+            username: requiredUser.username,
+            id: requiredUser._id,
+            profilePic: profilePicBase64,
+            likes: requiredUser.likes,
+            dislikes: requiredUser.dislikes,
+            allowed: requiredUser.allowed,
+            bio: requiredUser.bio,
+        });
     } catch(error) {
         console.log(error);
         res.status(500).send({error: "Getting the user resulted in error"});
