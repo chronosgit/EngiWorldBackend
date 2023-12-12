@@ -1,4 +1,4 @@
-# EngiWorld. Backend
+# EngiWorld. Backend application
 
 Backend application for EngiWorld project
 
