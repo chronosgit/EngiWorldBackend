@@ -12,12 +12,9 @@ const handlePostRead = async (req, res) => {
 };
 
 const handlePostCreation = async (req, res) => {
-    const {
-        title = "",
-        topic = "",
-        text = "",
-        date = new Date(),
-    } = req.body;
+    const {title, topic, text, date = new Date()} = req.body;
+
+    console.log(title, topic, text, date);
 
     try {
         const author = await Models.User.findOne({email: req.user.email});
@@ -32,7 +29,7 @@ const handlePostCreation = async (req, res) => {
         );
         await newPost.save();
     
-        res.sendStatus(201);
+        res.status(201).send(newPost);
     } catch(error) {
         res.status(500).send({error: "Creating new post resulted in error"});
     }

@@ -69,8 +69,6 @@ const postSchema = new mongoose.Schema({
     dislikes: [
         {type: mongoose.Schema.Types.ObjectId, ref: "User"},
     ],
-
-    // NEED "files" FIELD HERE
 });
 const Post = mongoose.model("Post", postSchema);
 
