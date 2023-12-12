@@ -21,6 +21,7 @@ const handlePostCreation = async (req, res) => {
         const newPost = new Models.Post(
             {
                 author: author,
+                authorUsername: author.username,
                 title: title,
                 topic: topic,
                 text: text,

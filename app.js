@@ -82,7 +82,7 @@ app.post("/dislike/", verifyJWT, dislikePostHandler);
 
 app.post("/follow/", verifyJWT, followHandler);
 
-app.post(
+app.put(
     "/upload/profilePicture/", 
     [
         verifyJWT, 
@@ -125,5 +125,12 @@ app.post("/comment/", async (req, res) => {
 });
 
 app.get("/user/:userId/posts/", async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const posts = await Models.Post.find({author: userId});
 
+        res.json({posts});
+    } catch(error) {
+        res.status(500).send({error: "Getting posts resulted in error"});
+    }
 });
