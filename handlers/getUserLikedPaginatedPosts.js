@@ -1,6 +1,6 @@
 const Models = require("../models");
 
-const handleRepostsGet = async (req, res) => {
+const handleGetUserLikedPaginatedPosts = async (req, res) => {
     try {
         const start = req.query.start;
         const end = req.query.end;
@@ -12,9 +12,9 @@ const handleRepostsGet = async (req, res) => {
         const arrayOfRepostIds = authedUser?.reposts;
 
         const userById = await Models.User.findById({_id: userId});
-        const requestedUserReposts = userById.reposts;
+        const requestedUserLikedPosts = userById.likes;
 
-        let recentPosts = await Models.Post.find({_id: {$in: requestedUserReposts}});
+        let recentPosts = await Models.Post.find({_id: {$in: requestedUserLikedPosts}});
         let posts = [];
         if(end - start + 1 >= recentPosts.length) {
             posts = recentPosts; // >
@@ -51,4 +51,4 @@ const handleRepostsGet = async (req, res) => {
     }
 };
 
-module.exports = handleRepostsGet;
+module.exports = handleGetUserLikedPaginatedPosts;

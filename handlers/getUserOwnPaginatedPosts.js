@@ -1,6 +1,6 @@
 const Models = require("../models");
 
-const handleRepostsGet = async (req, res) => {
+const handleGetUserOwnPaginatedPosts = async (req, res) => {
     try {
         const start = req.query.start;
         const end = req.query.end;
@@ -8,16 +8,13 @@ const handleRepostsGet = async (req, res) => {
         const userId = req.params.userId;
 
         const authedUser = await Models.User.findById({_id: authedUserId});
-        const arrayOfLikeIds = authedUser?.likes;
-        const arrayOfRepostIds = authedUser?.reposts;
+        const arrayOfLikeIds = authedUser.likes;
+        const arrayOfRepostIds = authedUser.reposts;
 
-        const userById = await Models.User.findById({_id: userId});
-        const requestedUserReposts = userById.reposts;
-
-        let recentPosts = await Models.Post.find({_id: {$in: requestedUserReposts}});
+        const recentPosts = await Models.Post.find({author: userId}).sort({created_at: -1});
         let posts = [];
         if(end - start + 1 >= recentPosts.length) {
-            posts = recentPosts; // >
+            posts = recentPosts;
         } else {
             posts = recentPosts.slice(start - 1, end);
         }
@@ -32,7 +29,7 @@ const handleRepostsGet = async (req, res) => {
                 id: posts[i]._id,
                 author: posts[i].author,
                 authorUsername: posts[i].authorUsername,
-                isLiked: authedUser !== -1 && arrayOfLikeIds.includes(posts[i]._id) ? true : false,
+                isLiked: authedUser !== -1 & arrayOfLikeIds.includes(posts[i]._id) ? true : false,
                 isReposted: authedUser !== -1 && arrayOfRepostIds.includes(posts[i]._id) ? true : false,
                 title: posts[i].title,
                 topic: posts[i].topic,
@@ -51,4 +48,4 @@ const handleRepostsGet = async (req, res) => {
     }
 };
 
-module.exports = handleRepostsGet;
+module.exports = handleGetUserOwnPaginatedPosts;
