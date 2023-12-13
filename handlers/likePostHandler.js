@@ -4,38 +4,26 @@ const handlePostLike = async (req, res) => {
     try {
         const likingUser = await Models.User.findOne({email: req.user.email});
         const likedPost = await Models.Post.findById({_id: req.body.postId});
-        
-        if(likedPost.likes.includes(likingUser._id) || likingUser.likes.includes(likedPost._id)) {
-            return res.status(400).send({error: "The post has already been liked by the user"});
-        }
-        if(likedPost.dislikes.includes(likingUser._id)){
-            await Models.Post.updateOne(
-                {_id: likedPost._id}, 
-                {
-                    $pullAll: {
-                        dislikes: [{_id: likingUser._id}],
-                    },
-                }
-            );
-        }
-        if(likingUser.dislikes.includes(likedPost._id)){
-            await Models.User.updateOne(
-                {_id: likingUser._id}, 
-                {
-                    $pullAll: {
-                        dislikes: [{_id: likedPost._id}],
-                    },
-                }
-            );
+
+        if(likedPost.likes.length > 0 || likingUser.likes.length > 0) {
+            if(likedPost.likes.includes(likingUser._id) || likingUser.likes.includes(likedPost._id)) {
+                await Models.User.findByIdAndUpdate({_id: likingUser._id}, {$pull: {likes: likedPost._id}});
+                await Models.Post.findByIdAndUpdate({_id: likedPost._id}, {$pull: {likes: likingUser._id}});
+
+                return res.sendStatus(200);
+            }
         }
 
         likingUser.likes.push(likedPost);
         likedPost.likes.push(likingUser);
-        likingUser.save();
-        likedPost.save();
+
+        await likingUser.save();
+        await likedPost.save();
 
         res.sendStatus(200);
     } catch(error) {
+        console.log(error);
+
         res.status(500).send({error: "Liking the post resulted in error"});
     }
 };

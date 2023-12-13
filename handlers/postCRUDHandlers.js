@@ -3,10 +3,22 @@ const Models = require("../models");
 const handlePostRead = async (req, res) => {
     try {
         const postId = req.params.id;
-        const requestedPost = await Models.Post.findById({_id: postId});
+        const post = await Models.Post.findById({_id: postId});
 
-        res.json({requestedPost});
+        res.json({
+            id: post._id,
+            author: post.author,
+            authorUsername: post.authorUsername,
+            title: post.title,
+            topic: post.topic,
+            text: post.text,
+            date: post.date,
+            comments: post.comments,
+            likes: post.likes,
+        });
     } catch(error) {
+        console.log(error);
+
         res.status(500).send({error: "Getting the post resulted in error"});
     }
 };
@@ -67,6 +79,7 @@ const handlePostDelete = async (req, res) => {
     try {
         const deletablePost = await Models.Post.findById({_id: req.params.id});
         const requestingUser = await Models.User.findOne({email: req.user.email});
+        
         if(deletablePost.author == requestingUser._id) {
             return res.status(403).send({error: "You don't have right for updating this post"});
         }

@@ -21,7 +21,6 @@ const repostHandler = require("./handlers/repostHandler");
 const getRepostsHandler = require("./handlers/getRepostsHandlers");
 const searchHandler = require("./handlers/searchHandler");
 const likePostHandler = require("./handlers/likePostHandler");
-const dislikePostHandler = require("./handlers/dislikePostHandler");
 const followHandler = require("./handlers/followHandler");
 const uploadProfilePicHandler = require("./handlers/uploadProfilePicHandler");
 
@@ -78,8 +77,6 @@ app.get("/search/", searchHandler);
 
 app.post("/like/", verifyJWT, likePostHandler);
 
-app.post("/dislike/", verifyJWT, dislikePostHandler);
-
 app.post("/follow/", verifyJWT, followHandler);
 
 app.put(
@@ -126,11 +123,44 @@ app.post("/comment/", async (req, res) => {
 
 app.get("/user/:userId/posts/", async (req, res) => {
     try {
+        const start = req.query.start;
+        const end = req.query.end;
+        const authedUserId = req.query.authedUserId;
         const userId = req.params.userId;
-        const posts = await Models.Post.find({author: userId});
 
-        res.json({posts});
+        const authedUser = await Models.User.findById({_id: authedUserId});
+        const arrayOfLikeIds = authedUser.likes;
+        const arrayOfRepostIds = authedUser.reposts;
+
+        const recentPosts = await Models.Post.find({author: userId}).sort({created_at: -1});
+        let posts = [];
+        if(end - start + 1 >= recentPosts.length) {
+            posts = recentPosts;
+        } else {
+            posts = recentPosts.slice(start - 1, end);
+        }
+
+        const data = [];
+        for(let i = 0; i < posts.length; i++) {
+            data.push({
+                id: posts[i]._id,
+                author: posts[i].author,
+                authorUsername: posts[i].authorUsername,
+                isLiked: arrayOfLikeIds.includes(posts[i]._id) ? true : false,
+                isReposted: arrayOfRepostIds.includes(posts[i]._id) ? true : false,
+                title: posts[i].title,
+                topic: posts[i].topic,
+                text: posts[i].text,
+                date: posts[i].date,
+                comments: posts[i].comments,
+                likes: posts[i].likes,
+            });
+        }
+
+        res.json(data);
     } catch(error) {
+        console.log(error);
+
         res.status(500).send({error: "Getting posts resulted in error"});
     }
 });

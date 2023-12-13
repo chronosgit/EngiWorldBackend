@@ -1,41 +1,27 @@
 const Models = require("../models");
 
 const handleRepost = async (req, res) => {
-    const {postId, operationType} = req.body;
-
     try {
         const repostingUser = await Models.User.findOne({email: req.user.email});
-        const repostedPost = await Models.Post.findById({_id: postId});
+        const repostedPost = await Models.Post.findById({_id: req.body.postId});
 
-        if(operationType === "makeRepost") {
-            if(repostingUser.reposts.includes(postId)) {
-                res.status(400).send({message: "Such post has already been reposted"});
-            } else {
-                repostingUser.reposts.push(repostedPost);
-                repostingUser.save();
+        if(repostingUser.reposts.length > 0) {
+            if(repostingUser.reposts.includes(repostedPost._id)) {
+                await Models.User.findByIdAndUpdate({_id: repostingUser._id}, {$pull: {reposts: repostedPost._id}});
 
-                res.sendStatus(200);
+                return res.sendStatus(200);
             }
-        } else if(operationType === "cancelRepost") {
-            if(!repostingUser.reposts.includes(postId)) {
-                res.status(400).send({message: "Such post hasn't been reposted by the user"});
-            } else {
-                await Models.User.updateOne(
-                    {_id: repostingUser._id}, 
-                    {
-                        $pullAll: {
-                            reposts: [{_id: postId}],
-                        },
-                    }
-                );
-                
-                res.sendStatus(200);
-            }
-        } else {
-            res.status(400).send({error: "Wrong operationType in post request"});
         }
+
+        repostingUser.reposts.push(repostedPost);
+
+        await repostingUser.save();
+
+        res.sendStatus(200);
     } catch(error) {
-        res.status(500).send({error: "Handling the request resulted in error"});
+        console.log(error);
+
+        res.status(500).send({error: "Reposting the post resulted in error"});
     }
 };
 
