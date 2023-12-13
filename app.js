@@ -90,36 +90,175 @@ app.put(
     uploadProfilePicHandler
 );
 
-app.get("/feed/", async (req, res) => {
+app.post("/comment/", verifyJWT, async (req, res) => {
     try {
-        const start = req.query.start;
-        const end = req.query.end;
+        const user = await Models.User.findOne({email: req.user.email});
+        const post = await Models.Post.findById({_id: req.body.postId});
 
-        const recentPosts = await Models.Post.find().sort({created_at: -1});
+        const newComment = new Models.Comment(
+            {
+                author: user._id,
+                authorUsername: user.username,
+                commentedPost: post,
+                text: req.body.comment,
+                date: new Date(),
+            }
+        );
+        await newComment.save()
 
-        if(end - start > recentPosts.length) {
-            res.json(recentPosts);
-        } else {
-            const limitedRecentPosts = recentPosts.slice(start - 1, end);
-
-            res.json(limitedRecentPosts);
-        }
+        res.json(newComment);
     } catch(error) {
         console.log(error);
-        res.status(500).send({error: "Getting posts resulted in error"});
+
+        res.status(500).send({error: "Posting a comment resulted in error"});
     }
 });
 
-app.get("/feed/:topic/", async (req, res) => { // getting 20 posts
-    const topic = req.params.topic;
-    const posts = Models.Post.find({topic: topic});
+app.get("/comments/:postId/", async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const post = await Models.Post.findById({_id: postId});
+        const comments = await Models.Comment.find({commentedPost: post});
 
-    res.status(200);
+        const data = [];
+
+        for(let i = 0; i < comments.length; i++) {
+            const author = await  Models.User.findById({_id: comments[i].author});
+            const profilePicBuffer = author.hasProfilePic ? author.profilePic : author.defaultProfilePic; 
+            const profilePicBase64 = Buffer.from(profilePicBuffer.data, "base64").toString("base64");
+
+            data.push({
+                id: comments[i]._id,
+                authorId: comments[i].author,
+                authorUsername: comments[i].authorUsername,
+                authorProfilePic: profilePicBase64,
+                // isLiked: ,
+                postId: comments[i].commentedPost,
+                text: comments[i].text,
+                date: comments[i].date,
+                likes: comments[i].likes,
+            })
+        }
+
+        res.json(data);
+    } catch(error) {
+        console.log(error);
+
+        res.status(500).send({error: "Getting comments on this post resulted in error"});
+    }
 });
 
-app.post("/comment/", async (req, res) => {
-    
+app.get("/auth/comments/:postId/", verifyJWT, async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const post = await Models.Post.findById({_id: postId});
+        const comments = await Models.Comment.find({commentedPost: post});
+
+        const user = await Models.User.findOne({email: req.user.email});
+
+        const data = [];
+        for(let i = 0; i < comments.length; i++) {
+            const author = await  Models.User.findById({_id: comments[i].author});
+            const profilePicBuffer = author.hasProfilePic ? author.profilePic : author.defaultProfilePic; 
+            const profilePicBase64 = Buffer.from(profilePicBuffer.data, "base64").toString("base64");
+
+            data.push({
+                id: comments[i]._id,
+                authorId: comments[i].author,
+                authorUsername: comments[i].authorUsername,
+                authorProfilePic: profilePicBase64,
+                isLiked: comments[i].likes.includes(user._id) ? true : false,
+                postId: comments[i].commentedPost,
+                text: comments[i].text,
+                date: comments[i].date,
+                likes: comments[i].likes,
+            })
+        }
+
+        res.json(data);
+    } catch(error) {
+        console.log(error);
+
+        res.status(500).send({error: "Getting comments on this post resulted in error"});
+    }
 });
+
+app.post("/comment/like/", verifyJWT, async (req, res) => {
+    try {
+        const likingUser = await Models.User.findOne({email: req.user.email});
+        const likedComment = await Models.Comment.findById({_id: req.body.commentId});
+
+        console.log(likedComment, likingUser);
+
+        if(likedComment.likes.length > 0) {
+            if(likedComment.likes.includes(likingUser._id)) {
+                await Models.Comment.findByIdAndUpdate({_id: likedComment._id}, {$pull: {likes: likingUser._id}});
+
+                return res.sendStatus(200);
+            }
+        }
+
+        likedComment.likes.push(likingUser);
+
+        await likedComment.save();
+
+        res.sendStatus(200);
+    } catch(error) {
+        console.log(error);
+
+        res.status(500).send({error: "Liking the comment resulted in error"});
+    }
+});
+
+app.delete("/:postId/comment/:commentId", verifyJWT, async(req, res) => {
+    try {
+        const {postId, commentId} = req.params;
+
+        await Models.Comment.deleteOne({_id: commentId});
+        await Models.Post.findByIdAndUpdate({_id: postId}, {$pull: {comments: commentId}});
+
+        res.sendStatus(200);
+    } catch(error) {
+        console.log(error);
+
+        res.status(500).send({error: "Deleting the comment resulted in error"});
+    }
+});
+
+app.route("/comment/:commentId/")
+    .get(async (req, res) => {
+        try {
+            const {commentId} = req.params;
+
+            const comment = await Models.Comment.findById({_id: commentId});
+
+            res.json(comment);
+        } catch(error) {
+            console.log(error);
+
+            res.status(500).send({error: "Getting the comment resulted in error"});
+        }
+    })
+    .put(verifyJWT, async(req, res) => {
+        try {
+            const commentId = req.params.commentId;
+            const updatedComment = await Models.Comment.findById({_id: commentId});
+
+            const requestingUser = await Models.User.findOne({email: req.user.email});
+            if(updatedComment.author == requestingUser._id) {
+                return res.status(403).send({error: "You don't have right for updating this post"});
+            }
+        
+            updatedComment.text = req.body.comment;
+            await updatedComment.save();
+        
+            res.json(updatedComment);
+        } catch(error) {
+            console.log(error);
+
+            res.status(500).send({error: "Updating the comment resulted in error"});
+        }
+    });
 
 app.get("/user/:userId/posts/", async (req, res) => {
     try {
@@ -163,4 +302,31 @@ app.get("/user/:userId/posts/", async (req, res) => {
 
         res.status(500).send({error: "Getting posts resulted in error"});
     }
+});
+
+app.get("/feed/", async (req, res) => {
+    try {
+        const start = req.query.start;
+        const end = req.query.end;
+
+        const recentPosts = await Models.Post.find().sort({created_at: -1});
+
+        if(end - start > recentPosts.length) {
+            res.json(recentPosts);
+        } else {
+            const limitedRecentPosts = recentPosts.slice(start - 1, end);
+
+            res.json(limitedRecentPosts);
+        }
+    } catch(error) {
+        console.log(error);
+        res.status(500).send({error: "Getting posts resulted in error"});
+    }
+});
+
+app.get("/feed/:topic/", async (req, res) => { 
+    const topic = req.params.topic;
+    const posts = Models.Post.find({topic: topic});
+
+    res.status(200);
 });

@@ -73,14 +73,12 @@ const commentSchema = new mongoose.Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId, ref: "User",
     },
+    authorUsername: String,
     commentedPost: {
         type: mongoose.Schema.Types.ObjectId, ref: "Post",
     },
     text: String,
     likes: [
-        {type: mongoose.Schema.Types.ObjectId, ref: "User"},
-    ],
-    dislikes: [
         {type: mongoose.Schema.Types.ObjectId, ref: "User"},
     ],
     date: Date,
