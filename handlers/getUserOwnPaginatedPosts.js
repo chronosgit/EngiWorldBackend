@@ -4,12 +4,7 @@ const handleGetUserOwnPaginatedPosts = async (req, res) => {
     try {
         const start = req.query.start;
         const end = req.query.end;
-        const authedUserId = req.query.authedUserId;
         const userId = req.params.userId;
-
-        const authedUser = await Models.User.findById({_id: authedUserId});
-        const arrayOfLikeIds = authedUser.likes;
-        const arrayOfRepostIds = authedUser.reposts;
 
         const recentPosts = await Models.Post.find({author: userId}).sort({created_at: -1});
         let posts = [];
@@ -29,14 +24,14 @@ const handleGetUserOwnPaginatedPosts = async (req, res) => {
                 id: posts[i]._id,
                 author: posts[i].author,
                 authorUsername: posts[i].authorUsername,
-                isLiked: authedUser !== -1 & arrayOfLikeIds.includes(posts[i]._id) ? true : false,
-                isReposted: authedUser !== -1 && arrayOfRepostIds.includes(posts[i]._id) ? true : false,
+                isEdited: posts[i].isEdited,
                 title: posts[i].title,
                 topic: posts[i].topic,
                 text: posts[i].text,
                 date: posts[i].date,
                 comments: posts[i].comments,
                 likes: posts[i].likes,
+                reposts: posts[i].reposts,
             });
         }
 

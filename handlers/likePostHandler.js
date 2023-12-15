@@ -10,17 +10,20 @@ const handlePostLike = async (req, res) => {
                 await Models.User.findByIdAndUpdate({_id: likingUser._id}, {$pull: {likes: likedPost._id}});
                 await Models.Post.findByIdAndUpdate({_id: likedPost._id}, {$pull: {likes: likingUser._id}});
 
-                return res.sendStatus(200);
+                return res.status(200).send({status: "unliked"});
             }
         }
 
-        likingUser.likes.push(likedPost);
-        likedPost.likes.push(likingUser);
+        await Models.User.findOneAndUpdate({_id: likingUser._id}, {$push: {likes: likedPost}});
+        await Models.Post.findOneAndUpdate({_id: likedPost._id}, {$push: {likes: likingUser}});
+
+        // likingUser.likes.push(likedPost);
+        // likedPost.likes.push(likingUser);
 
         await likingUser.save();
         await likedPost.save();
 
-        res.sendStatus(200);
+        res.status(200).send({status: "liked"});
     } catch(error) {
         console.log(error);
 

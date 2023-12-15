@@ -2,7 +2,7 @@ const Models = require("../models");
 
 const handlePostRead = async (req, res) => {
     try {
-        const postId = req.params.id;
+        const postId = req.params.postId;
         const post = await Models.Post.findById({_id: postId});
 
         res.json({
@@ -14,7 +14,9 @@ const handlePostRead = async (req, res) => {
             text: post.text,
             date: post.date,
             comments: post.comments,
+            isEdited: post.isEdited,
             likes: post.likes,
+            reposts: post.reposts,
         });
     } catch(error) {
         console.log(error);
@@ -36,6 +38,7 @@ const handlePostCreation = async (req, res) => {
                 authorUsername: author.username,
                 title: title,
                 topic: topic,
+                isEdited: false,
                 text: text,
                 date: date,
             }
@@ -50,7 +53,7 @@ const handlePostCreation = async (req, res) => {
 
 const handlePostUpdate = async (req, res) => {
     try {
-        const postId = req.params.id;
+        const postId = req.params.postId;
         const updatedPost = await Models.Post.findById({_id: postId});
 
         const requestingUser = await Models.User.findOne({email: req.user.email});
@@ -67,24 +70,29 @@ const handlePostUpdate = async (req, res) => {
         updatedPost.title = title;
         updatedPost.topic = topic;
         updatedPost.text = text;
+        updatedPost.date = new Date();
+        updatedPost.isEdited = true;
         await updatedPost.save();
     
         res.json(updatedPost);
     } catch(error) {
+        console.log(postId)
+        console.log(error);
+
         res.status(500).send({error: "Updating the post resulted in error"});
     }
 };
 
 const handlePostDelete = async (req, res) => {
     try {
-        const deletablePost = await Models.Post.findById({_id: req.params.id});
+        const deletablePost = await Models.Post.findById({_id: req.params.postId});
         const requestingUser = await Models.User.findOne({email: req.user.email});
         
         if(deletablePost.author == requestingUser._id) {
             return res.status(403).send({error: "You don't have right for updating this post"});
         }
 
-        await Models.Post.deleteOne({_id: req.params.id});
+        await Models.Post.deleteOne({_id: req.params.postId});
         
         res.sendStatus(200);
     } catch(error) {

@@ -25,7 +25,6 @@ const followHandler = require("./handlers/followHandler");
 const uploadProfilePicHandler = require("./handlers/uploadProfilePicHandler");
 const postCommentHandler = require("./handlers/postCommentHandler");
 const getCommentsOnPostHandler = require("./handlers/getCommentsOnPostHandler");
-const authGetCommentsOnPostHandler = require("./handlers/authGetCommentsOnPostHandler");
 const likeCommentHandler = require("./handlers/likeCommentHandler");
 const deleteCommentHandler = require("./handlers/deleteCommentHandler");
 const getCommentHandler = require("./handlers/getCommentHandler");
@@ -70,7 +69,7 @@ app.route("/user/")
     .put(verifyJWT, userRUDHandlers.handleUserUpdate)
     .delete(verifyJWT, userRUDHandlers.handleUserDelete);
 
-app.route("/post/:id/")
+app.route("/post/:postId/")
     .get(postCRUDHandlers.handlePostRead)
     .put(verifyJWT, postCRUDHandlers.handlePostUpdate)
     .delete(verifyJWT, postCRUDHandlers.handlePostDelete);
@@ -101,8 +100,6 @@ app.put(
 app.post("/comment/", verifyJWT, postCommentHandler);
 
 app.get("/comments/:postId/", getCommentsOnPostHandler);
-
-app.get("/auth/comments/:postId/", verifyJWT, authGetCommentsOnPostHandler);
 
 app.post("/comment/like/", verifyJWT, likeCommentHandler);
 

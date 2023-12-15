@@ -11,6 +11,8 @@ const handleUpdateComment = async (req, res) => {
         }
     
         updatedComment.text = req.body.comment;
+        updatedComment.date = new Date();
+        updatedComment.isEdited = true;
         await updatedComment.save();
     
         res.json(updatedComment);

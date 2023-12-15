@@ -11,10 +11,13 @@ const handlePostComment = async (req, res) => {
                 authorUsername: user.username,
                 commentedPost: post,
                 text: req.body.comment,
+                isEdited: false,
                 date: new Date(),
             }
         );
-        await newComment.save()
+        await newComment.save();
+
+        await Models.Post.findOneAndUpdate({_id: post._id}, {$push: {comments: newComment._id.toString()}});
 
         res.json(newComment);
     } catch(error) {

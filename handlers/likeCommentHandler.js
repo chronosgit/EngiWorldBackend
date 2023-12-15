@@ -5,21 +5,17 @@ const handleLikeComment = async (req, res) => {
         const likingUser = await Models.User.findOne({email: req.user.email});
         const likedComment = await Models.Comment.findById({_id: req.body.commentId});
 
-        console.log(likedComment, likingUser);
-
         if(likedComment.likes.length > 0) {
             if(likedComment.likes.includes(likingUser._id)) {
                 await Models.Comment.findByIdAndUpdate({_id: likedComment._id}, {$pull: {likes: likingUser._id}});
 
-                return res.sendStatus(200);
+                return res.status(200).json({status: "unliked"});
             }
         }
 
-        likedComment.likes.push(likingUser);
+        await Models.Comment.findOneAndUpdate({_id: likedComment._id}, {$push: {likes: likingUser}});
 
-        await likedComment.save();
-
-        res.sendStatus(200);
+        res.status(200).json({status: "liked"});
     } catch(error) {
         console.log(error);
 

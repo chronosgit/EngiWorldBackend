@@ -18,11 +18,11 @@ const handleGetCommentsOnPost = async (req, res) => {
                 authorId: comments[i].author,
                 authorUsername: comments[i].authorUsername,
                 authorProfilePic: profilePicBase64,
-                // isLiked: ,
                 postId: comments[i].commentedPost,
                 text: comments[i].text,
                 date: comments[i].date,
                 likes: comments[i].likes,
+                isEdited: comments[i].isEdited,
             })
         }
 

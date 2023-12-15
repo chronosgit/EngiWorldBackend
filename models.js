@@ -59,11 +59,18 @@ const postSchema = new mongoose.Schema({
     text: String,
     date: Date,
     comments: [
-        {type: mongoose.Schema.Types.ObjectId, ref: "Comment"},
+        {type: Array, "default": []},
     ],
     likes: [
         {type: mongoose.Schema.Types.ObjectId, ref: "User"},
     ],
+    reposts: [
+        {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+    ],
+    isEdited: {
+        type: Boolean,
+        default: false,
+    },
 });
 const Post = mongoose.model("Post", postSchema);
 
@@ -82,6 +89,10 @@ const commentSchema = new mongoose.Schema({
         {type: mongoose.Schema.Types.ObjectId, ref: "User"},
     ],
     date: Date,
+    isEdited: {
+        type: Boolean,
+        default: false,
+    }
 });
 const Comment = mongoose.model("Comment", commentSchema);
 
