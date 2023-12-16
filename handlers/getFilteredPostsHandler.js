@@ -1,17 +1,26 @@
 const Models = require("../models");
 
-const handleGetUserOwnPaginatedPosts = async (req, res) => {
+const handleGettingFilteredPosts = async (req, res) => {
     try {
+        const filter = req.params.filter;
         const start = 1 // parseInt(req.query.start);
         const end = parseInt(req.query.end);
-        const userId = req.params.userId;
 
-        const recentPosts = await Models.Post.find({author: userId}).sort({created_at: -1});
         let posts = [];
-        if(end - start + 1 >= recentPosts.length) {
-            posts = recentPosts;
+        if(filter === "time") {
+            posts = await Models.Post.find().sort({created_at: -1});
+        } else if(filter === "likes") {
+            posts = await Models.Post.find().sort({likes: -1});
+        } else if(filter === "reposts") {
+            posts = await Models.Post.find().sort({reposts: -1});
         } else {
-            posts = recentPosts.slice(start - 1, end);
+            return res.status(500).send({error: "The filter option for getting posts is wrong"});
+        }
+        
+        if(end - start + 1 >= posts.length) {
+            posts = posts;
+        } else {
+            posts = posts.slice(start - 1, end);
         }
 
         const data = [];
@@ -28,15 +37,15 @@ const handleGetUserOwnPaginatedPosts = async (req, res) => {
                 comments: posts[i].comments,
                 likes: posts[i].likes,
                 reposts: posts[i].reposts,
-            });
+            })
         }
 
         res.json(data);
     } catch(error) {
         console.log(error);
 
-        res.status(500).send({error: "Getting posts resulted in error"});
+        res.status(500).send({error: "Getting the posts resulted in error"});
     }
 };
 
-module.exports = handleGetUserOwnPaginatedPosts;
+module.exports = handleGettingFilteredPosts;

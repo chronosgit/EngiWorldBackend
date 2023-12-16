@@ -4,12 +4,13 @@ require('dotenv').config();
 const Models = require("../models");
 
 const handleUserLogin = async (req, res) => {
-    const {email, password} = req.body;
-
-    let user = {};
-
     try {
-        user = await Models.User.findOne({email: email});
+        const {email, password} = req.body;
+        const user = await Models.User.findOne({email: email});
+
+        if(user === null) {
+            return res.status(404).send({error: "Such user doesn't exist"});
+        }
 
         if(user.password !== password) {
             res.status(403).send({error: "Invalid password"});

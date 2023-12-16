@@ -2,8 +2,8 @@ const Models = require("../models");
 
 const handleRepostsGet = async (req, res) => {
     try {
-        const start = req.query.start;
-        const end = req.query.end;
+        const start = 1 // parseInt(req.query.start);
+        const end = parseInt(req.query.end);
         const userId = req.params.userId;
 
         const userById = await Models.User.findById({_id: userId});
@@ -15,10 +15,6 @@ const handleRepostsGet = async (req, res) => {
             posts = recentPosts; // >
         } else {
             posts = recentPosts.slice(start - 1, end);
-        }
-
-        if((start === 1 && end - start + 1 >= recentPosts.length) || start > recentPosts.length) {
-            return res.sendStatus(200);
         }
 
         const data = [];
