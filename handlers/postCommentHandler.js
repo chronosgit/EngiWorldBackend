@@ -17,6 +17,23 @@ const handlePostComment = async (req, res) => {
         );
         await newComment.save();
 
+        const newNotification = new Models.Notification(
+            {
+                sender: likingUser,
+                senderUsername: likingUser.username,
+                receiver: likedPost.author,
+                receiverUsername: likedPost.authorUsername,
+                post: likedPost,
+                postTitle: likedPost.title,
+                comment: newComment,
+                type: "comment",
+                typeOperation: "new",
+                date: new Date(),
+                isRead: false,
+            }
+        );
+        await newNotification.save();
+
         await Models.Post.findOneAndUpdate({_id: post._id}, {$push: {comments: newComment._id.toString()}});
 
         res.json(newComment);

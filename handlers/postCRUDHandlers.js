@@ -44,6 +44,27 @@ const handlePostCreation = async (req, res) => {
             }
         );
         await newPost.save();
+
+        const postAuthorFollowers = await Models.User.find({follows: author});
+        for(let i = 0; i < postAuthorFollowers.length; i++) {
+            const follower = postAuthorFollowers[i];
+            const newNotification = new Models.Notification(
+                {
+                    sender: author,
+                    senderUsername: author.username,
+                    receiver: follower.author,
+                    receiverUsername: follower.authorUsername,
+                    post: newPost,
+                    postTitle: newPost.title,
+                    type: "post",
+                    typeOperation: "new",
+                    date: new Date(),
+                    isRead: false,
+                }
+            );
+            await newNotification.save();
+        }
+
     
         res.status(201).send(newPost);
     } catch(error) {
@@ -92,8 +113,11 @@ const handlePostDelete = async (req, res) => {
             return res.status(403).send({error: "You don't have right for updating this post"});
         }
 
+        const thisPostAuthor = await Models.Post.findById({_id: postId}).author;
+        await Models.Notification.deleteOne({sender: requestingUser, post: deletablePost._id, type: "post"});
+
         await Models.Post.deleteOne({_id: req.params.postId});
-        
+
         res.sendStatus(200);
     } catch(error) {
         res.status(500).send({error: "Deleting the post resulted in error"});

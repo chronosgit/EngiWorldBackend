@@ -8,6 +8,8 @@ const handleUserRead = async (req, res) => {
         const profilePicBuffer = user.hasProfilePic ? user.profilePic : user.defaultProfilePic; 
         const profilePicBase64 = Buffer.from(profilePicBuffer.data, "base64").toString("base64");
 
+        const notifications = await Models.Notification.find({receiver: user});
+
         res.json({
             email: email,
             username: user.username,
@@ -17,6 +19,7 @@ const handleUserRead = async (req, res) => {
             dislikes: user.dislikes,
             allowed: user.allowed,
             bio: user.bio,
+            notifications: notifications,
         });
     } catch(error) {
         console.log(error);

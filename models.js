@@ -98,15 +98,32 @@ const Comment = mongoose.model("Comment", commentSchema);
 
 
 
-// const notificationSchema = new mongoose.Schema({
-//     receiver: {
-//         type: mongoose.Schema.Types.ObjectId, ref: "User",
-//     },
-//     date: Date,
-//     isRead: Boolean,
-// });
-// here come childs, using mongoose discrimator logic
+const notificationSchema = new mongoose.Schema({
+    sender: {
+        type: mongoose.Schema.Types.ObjectId, ref: "User",
+    },
+    senderUsername: String,
+    receiver: {
+        type: mongoose.Schema.Types.ObjectId, ref: "User",
+    },
+    receiverUsername: String,
+    post: {
+        type: mongoose.Schema.Types.ObjectId, ref: "Post",
+    },
+    postTitle: String,
+    comment: {
+        type: mongoose.Schema.Types.ObjectId, ref: "Comment",
+    },
+    type: String,
+    typeOperation: String,
+    date: Date,
+    isRead: {
+        type: String,
+        default: false,
+    },
+});
+const Notification = mongoose.model("Notification", notificationSchema);
 
 
 
-module.exports = {User, Post, Comment};
+module.exports = {User, Post, Comment, Notification};

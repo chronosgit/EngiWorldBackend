@@ -17,11 +17,21 @@ const handlePostLike = async (req, res) => {
         await Models.User.findOneAndUpdate({_id: likingUser._id}, {$push: {likes: likedPost}});
         await Models.Post.findOneAndUpdate({_id: likedPost._id}, {$push: {likes: likingUser}});
 
-        // likingUser.likes.push(likedPost);
-        // likedPost.likes.push(likingUser);
-
-        await likingUser.save();
-        await likedPost.save();
+        const newNotification = new Models.Notification(
+            {
+                sender: likingUser,
+                senderUsername: likingUser.username,
+                receiver: likedPost.author,
+                receiverUsername: likedPost.authorUsername,
+                post: likedPost,
+                postTitle: likedPost.title,
+                type: "post",
+                typeOperation: "like",
+                date: new Date(),
+                isRead: false,
+            }
+        );
+        await newNotification.save();
 
         res.status(200).send({status: "liked"});
     } catch(error) {

@@ -4,6 +4,9 @@ const handleDeleteComment = async (req, res) => {
     try {
         const {postId, commentId} = req.params;
 
+        const thisPostAuthor = await Models.Post.findById({_id: postId}).author;
+        await Models.Notification.deleteOne({receiver: thisPostAuthor, comment: commentId, type: "comment"});
+
         await Models.Comment.deleteOne({_id: commentId});
         await Models.Post.findByIdAndUpdate({_id: postId}, {$pull: {comments: commentId}});
 
