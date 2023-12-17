@@ -2,33 +2,48 @@ const Models = require("../models");
 
 const handleSearch = async (req, res) => {
     try {
-        const searchQuery = req.query.searchQuery;
+        const searchQuery = req.query.newValue;
 
         if(searchQuery === "") { // empty query MUST be handled in client
             return res.sendStatus(204); 
         }
 
-        const data = [];
-        var regexQuery = {
-            username: new RegExp(req.query.searchQuery, "i"),
-            title: new RegExp(req.query.searchQuery, "i"),
+        if(typeof(searchQuery) !== "string") {
+            return res.sendStatus(500);
         }
 
-        const correspondingUsers = await Models.User.find(
-            {
-                username: {"$regex": searchQuery, "$options": "i"}
-            },
-            "_id email username hasProfilePic follows reposts profilePic likes dislikes allowed bio"
-        );
-        const correspondingPosts = await Models.Post.find(
-            {
-                title: {"$regex": searchQuery, "$options": "i"}
-            }
-        );
+        const data = [];
+        const usersSearchCriteria = {
+            $or: [
+                {username: { $regex: new RegExp(searchQuery, 'i') }},
+            ],
+        };
+        const correspondingUsers = await Models.User.find(usersSearchCriteria);
+        const postsSearchCriteria = {
+            $or: [
+                {title: { $regex: new RegExp(searchQuery, 'i') }},
+            ],
+        };
+        const correspondingPosts = await Models.Post.find(postsSearchCriteria);
         data.push(...correspondingUsers, ...correspondingPosts);
 
-        res.json({data});
+        const formattedData = [];
+        for(let i = 0; i < data.length; i++) {
+            const document = data[i];
+            const type = document.username ? "user" : "post";
+            const value = document.username ? document?.username : document?.title;
+
+            formattedData.push({
+                id: document._id,
+                type: type,
+                value: value,
+            });
+        }
+
+        res.json(formattedData);
     } catch(error) {
+        console.log(error);
+
         res.status(500).send({error: "Search resulted in error"});
     }
 };
