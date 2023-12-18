@@ -8,7 +8,7 @@ const handleUserRead = async (req, res) => {
         const profilePicBuffer = user.hasProfilePic ? user.profilePic : user.defaultProfilePic; 
         const profilePicBase64 = Buffer.from(profilePicBuffer.data, "base64").toString("base64");
 
-        const notifications = await Models.Notification.find({receiver: user});
+        const notifications = await Models.Notification.find({receiver: user}).sort({date: -1});
 
         res.json({
             email: email,
@@ -17,6 +17,7 @@ const handleUserRead = async (req, res) => {
             profilePic: profilePicBase64,
             likes: user.likes,
             dislikes: user.dislikes,
+            follows: user.follows,
             allowed: user.allowed,
             bio: user.bio,
             notifications: notifications,

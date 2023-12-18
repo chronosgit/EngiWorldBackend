@@ -26,12 +26,10 @@ const handlePostRead = async (req, res) => {
 };
 
 const handlePostCreation = async (req, res) => {
-    const {title, topic, text, date = new Date()} = req.body;
-
-    console.log(title, topic, text, date);
-
     try {
+        const {title, topic, text, date = new Date()} = req.body;
         const author = await Models.User.findOne({email: req.user.email});
+
         const newPost = new Models.Post(
             {
                 author: author,
@@ -52,12 +50,12 @@ const handlePostCreation = async (req, res) => {
                 {
                     sender: author,
                     senderUsername: author.username,
-                    receiver: follower.author,
-                    receiverUsername: follower.authorUsername,
+                    receiver: follower,
+                    receiverUsername: follower.username,
                     post: newPost,
                     postTitle: newPost.title,
                     type: "post",
-                    typeOperation: "new",
+                    message: `${author.username} made a new post.`,
                     date: new Date(),
                     isRead: false,
                 }
@@ -68,6 +66,8 @@ const handlePostCreation = async (req, res) => {
     
         res.status(201).send(newPost);
     } catch(error) {
+        console.log(error);
+
         res.status(500).send({error: "Creating new post resulted in error"});
     }
 };
@@ -113,13 +113,15 @@ const handlePostDelete = async (req, res) => {
             return res.status(403).send({error: "You don't have right for updating this post"});
         }
 
-        const thisPostAuthor = await Models.Post.findById({_id: postId}).author;
-        await Models.Notification.deleteOne({sender: requestingUser, post: deletablePost._id, type: "post"});
+        await Models.Comment.deleteMany({commentedPost: deletablePost});
+        await Models.Notification.deleteMany({post: deletablePost});
 
         await Models.Post.deleteOne({_id: req.params.postId});
 
         res.sendStatus(200);
     } catch(error) {
+        console.log(error);
+
         res.status(500).send({error: "Deleting the post resulted in error"});
     }
 };

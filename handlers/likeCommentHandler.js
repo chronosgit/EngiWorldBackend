@@ -13,22 +13,23 @@ const handleLikeComment = async (req, res) => {
             }
         }
 
-        const newNotification = new Models.Notification(
-            {
-                sender: likingUser,
-                senderUsername: likingUser.username,
-                receiver: likedComment.author,
-                receiverUsername: likedComment.authorUsername,
-                post: likedComment.commentedPost,
-                postTitle: likedComment.commentedPost.title,
-                comment: likedComment,
-                type: "comment",
-                typeOperation: "like",
-                date: new Date(),
-                isRead: false,
-            }
-        );
-        await newNotification.save();
+        if(likingUser.username !== likedComment.authorUsername) {
+            const newNotification = new Models.Notification(
+                {
+                    sender: likingUser,
+                    senderUsername: likingUser.username,
+                    receiver: likedComment.author,
+                    receiverUsername: likedComment.authorUsername,
+                    post: likedComment.commentedPost,
+                    postTitle: likedComment.commentedPost.title,
+                    comment: likedComment,
+                    type: "comment",
+                    message: `${likingUser.username} liked your comment under ${likedComment.authorUsername}'s post.`,
+                    date: new Date(),
+                }
+            );
+            await newNotification.save();
+        }
 
         await Models.Comment.findOneAndUpdate({_id: likedComment._id}, {$push: {likes: likingUser}});
 

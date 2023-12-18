@@ -39,7 +39,7 @@ const handleSearch = async (req, res) => {
                 value: value,
             });
         }
-
+        
         res.json(formattedData);
     } catch(error) {
         console.log(error);

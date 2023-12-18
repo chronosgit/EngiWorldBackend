@@ -41,9 +41,9 @@ const userSchema = new mongoose.Schema({
     reposts: [
         {type: mongoose.Schema.Types.ObjectId, ref: "Post"},
     ],
-    allowed: {
-        type: Array, "default": [],
-    },
+    // allowed: {
+    //     type: Array, "default": [],
+    // },
 });
 const User = mongoose.model("User", userSchema);
 
@@ -115,12 +115,8 @@ const notificationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, ref: "Comment",
     },
     type: String,
-    typeOperation: String,
+    message: String,
     date: Date,
-    isRead: {
-        type: String,
-        default: false,
-    },
 });
 const Notification = mongoose.model("Notification", notificationSchema);
 

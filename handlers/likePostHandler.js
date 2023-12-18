@@ -10,12 +10,18 @@ const handlePostLike = async (req, res) => {
                 await Models.User.findByIdAndUpdate({_id: likingUser._id}, {$pull: {likes: likedPost._id}});
                 await Models.Post.findByIdAndUpdate({_id: likedPost._id}, {$pull: {likes: likingUser._id}});
 
+                await Models.Notification.deleteOne({sender: likingUser, receiver: likedPost.author, type: "post", message: `${likingUser.username} liked your post.`});
+
                 return res.status(200).send({status: "unliked"});
             }
         }
 
         await Models.User.findOneAndUpdate({_id: likingUser._id}, {$push: {likes: likedPost}});
         await Models.Post.findOneAndUpdate({_id: likedPost._id}, {$push: {likes: likingUser}});
+
+        if(likedPost.authorUsername === likingUser.username) { // no notification for self-like
+            return res.status(200).send({status: "liked"});
+        }
 
         const newNotification = new Models.Notification(
             {
@@ -26,9 +32,8 @@ const handlePostLike = async (req, res) => {
                 post: likedPost,
                 postTitle: likedPost.title,
                 type: "post",
-                typeOperation: "like",
+                message: `${likingUser.username} liked your post.`,
                 date: new Date(),
-                isRead: false,
             }
         );
         await newNotification.save();
