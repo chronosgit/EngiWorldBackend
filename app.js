@@ -34,6 +34,7 @@ const getUserLikedPaginatedPosts = require("./handlers/getUserLikedPaginatedPost
 const updateUserBioHandler = require("./handlers/updateUserBioHandler");
 const getFilteredPostsHandler = require("./handlers/getFilteredPostsHandler");
 const deleteNotificationsHandler = require("./handlers/deleteNotificationsHandler");
+const getUserFollowsHandler = require("./handlers/getUserFollowsHandler");
 
 const Models = require("./models");
 
@@ -116,6 +117,8 @@ app.get("/user/:userId/posts/", getUserOwnPaginatedPosts);
 app.get("/user/:userId/reposts/", getRepostsHandler);
 
 app.get("/user/:userId/liked/", getUserLikedPaginatedPosts);
+
+app.get("/user/:userId/follows/", getUserFollowsHandler);
 
 app.post("/user/:userId/update/bio/", verifyJWT, updateUserBioHandler);
 
